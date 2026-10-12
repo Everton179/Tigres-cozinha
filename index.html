@@ -17,22 +17,22 @@ header{background:#080b10;border-bottom:1px solid #303946;padding:20px 5%;displa
 .entrada{background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:16px;padding:25px;margin-bottom:32px;box-shadow:0 10px 28px #0003}
 .entrada h2{color:#111827;font-size:21px;margin-bottom:10px}
 .entrada p{color:#050505;font-size:15px;line-height:1.6;margin-bottom:18px}
-textarea{width:100%;min-height:160px;resize:vertical;background:#fff;color:#090909;border:2px solid #070707;border-radius:10px;padding:16px;outline:none;font-size:14px;line-height:1.6;transition:.2s}
+textarea{width:100%;min-height:160px;resize:vertical;background:#fff;color:#090909;border:2px solid #070707;border-radius:10px;padding:16px;outline:none;font-size:14px;line-height:1.6}
 textarea::placeholder{color:#7a8797}
 textarea:focus{border-color:#3478d4;box-shadow:0 0 0 3px #3478d422}
 button{font-family:inherit}
 .btn-organizar{margin-top:14px;width:100%;padding:14px;border:2px solid #080808;border-radius:9px;background:#5091ec;color:#fff;font-weight:750;font-size:14px;cursor:pointer;transition:.2s}
 .btn-organizar:hover{background:#141bcf;transform:translateY(-1px)}
-.titulo-pedidos{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}
+.titulo-pedidos{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 20px}
 .titulo-pedidos h2{font-size:22px;font-weight:800}
 .contador{background:#202a37;border:1px solid #39485b;color:#dbeafe;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:800}
-#pedidos{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:start}
+#pedidos,#historico{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:start}
 .pedido{background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:14px;padding:20px;box-shadow:0 7px 22px #0003;transition:.2s}
 .pedido:hover{border-color:#6b9fe2;transform:translateY(-2px);box-shadow:0 12px 28px #0004}
-.pedido.novo{border-color:#3478d4;box-shadow:0 0 0 1px #3478d41f,0 8px 24px #0003}
+.pedido.novo{border-color:#3478d4}
 .pedido.preparando{border-color:#2563EB}
 .pedido.pronto{border-color:#16A34A}
-.pedido.entregue{border-color:#64748b;opacity:.85}
+.pedido.entregue{border-color:#64748b}
 .pedido-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
 .numero{font-size:18px;font-weight:800;color:#111827;overflow-wrap:anywhere}
 .dados-cliente{font-size:18px;font-weight:800;color:#111827;overflow-wrap:anywhere}
@@ -58,10 +58,12 @@ button{font-family:inherit}
 .btn-pronto:hover{background:#126e34}
 .btn-entregue{background:#6d6b6b;color:#fff;border:1px solid #334155!important}
 .btn-entregue:hover{background:#0e0e0e}
-.btn-salvar{background:#8f52f9;color:#fff;border:1px solid #6D28D9!important}
+.btn-salvar{background:#8f52f9;color:#fff;border:1px solid #6D28D9!important;grid-column:1/-1}
 .btn-salvar:hover{background:#330283}
 .btn-liberar{background:#15803d!important;color:white}
-.vazio{text-align:center;color:#526176;padding:50px 20px;border:2px dashed #64748b;border-radius:14px;background:#f0f1f3;grid-column:1/-1;line-height:1.7}
+.btn-finalizar{width:100%;margin-top:12px;background:#6d28d9;color:#fff;border:1px solid #5b21b6;border-radius:8px;padding:12px;font-weight:800;cursor:pointer}
+.btn-finalizar:hover{background:#4c1d95}
+.vazio{text-align:center;color:#526176;padding:35px 20px;border:2px dashed #64748b;border-radius:14px;background:#f0f1f3;grid-column:1/-1;line-height:1.7}
 .login-box{width:92%;max-width:430px;margin:55px auto;padding:28px;background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:16px;box-shadow:0 10px 28px #0004}
 .login-box h2{margin-bottom:10px;color:#111827}
 .login-box p{margin-bottom:18px;line-height:1.5;color:#475569}
@@ -71,6 +73,7 @@ button{font-family:inherit}
 .btn-sair{background:#334155;padding:9px 13px}
 .mensagem-login{margin-top:12px;font-size:13px;overflow-wrap:anywhere;color:#b91c1c}
 .area-usuario{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 5%;background:#080b10;color:#dbeafe;font-size:13px}
+.data-finalizacao{font-size:12px;color:#64748b;margin:10px 0}
 @media(max-width:600px){
  header{padding:16px 5%}
  .logo{font-size:19px}
@@ -78,7 +81,7 @@ button{font-family:inherit}
  .container{width:92%;margin:22px auto}
  .entrada{padding:18px}
  .titulo-pedidos h2{font-size:19px}
- #pedidos{grid-template-columns:1fr;gap:15px}
+ #pedidos,#historico{grid-template-columns:1fr;gap:15px}
  .pedido{padding:17px}
  .area-usuario{flex-wrap:wrap}
 }
@@ -116,13 +119,18 @@ button{font-family:inherit}
     </div>
 
     <div class="titulo-pedidos">
-        <h2 id="tituloPedidos">📋 Pedidos</h2>
+        <h2 id="tituloPedidos">📋 Pedidos ativos</h2>
         <div class="contador" id="contador">0 pedidos</div>
     </div>
+    <div id="pedidos"><div class="vazio">Carregando pedidos...</div></div>
 
-    <div id="pedidos">
-        <div class="vazio">Carregando pedidos...</div>
-    </div>
+    <section id="secaoHistorico" style="display:none">
+        <div class="titulo-pedidos">
+            <h2>🗄️ Histórico de pedidos finalizados</h2>
+            <div class="contador" id="contadorHistorico">0 finalizados</div>
+        </div>
+        <div id="historico"><div class="vazio">Carregando histórico...</div></div>
+    </section>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -166,16 +174,14 @@ function dinheiro(valor) {
     });
 }
 
-function mensagemErroFirebase(erro) {
-    console.error(erro);
-    $("mensagemLogin").textContent =
-        "Não foi possível concluir. Confira o acesso e as regras do Firebase.";
+function dataFormatada(valor) {
+    if (!valor || typeof valor.toDate !== "function") return "Data não registrada";
+    return valor.toDate().toLocaleString("pt-BR");
 }
 
 $("formLogin").addEventListener("submit", async e => {
     e.preventDefault();
     $("mensagemLogin").textContent = "Verificando acesso...";
-
     try {
         await auth.signInWithEmailAndPassword(
             $("emailLogin").value.trim(),
@@ -183,9 +189,9 @@ $("formLogin").addEventListener("submit", async e => {
         );
         $("senhaLogin").value = "";
     } catch (erro) {
+        console.error(erro);
         $("mensagemLogin").textContent =
             "Não foi possível entrar. Confira o e-mail e a senha.";
-        console.error(erro);
     }
 });
 
@@ -223,64 +229,76 @@ auth.onAuthStateChanged(async usuario => {
     $("loginBox").style.display = "none";
     $("appContainer").style.display = "block";
     $("areaUsuario").style.display = "flex";
-
     $("tituloPainel").textContent = funcaoAtual === "financeiro"
         ? "PAINEL DO FINANCEIRO" : "PAINEL DA COZINHA";
-
     $("identificacaoUsuario").textContent = funcaoAtual === "financeiro"
         ? "Acesso: Financeiro" : "Acesso: Cozinha";
-
-    $("entradaPedido").style.display =
-        funcaoAtual === "financeiro" ? "block" : "none";
-
+    $("entradaPedido").style.display = funcaoAtual === "financeiro" ? "block" : "none";
+    $("secaoHistorico").style.display = funcaoAtual === "financeiro" ? "block" : "none";
     $("tituloPedidos").textContent = funcaoAtual === "financeiro"
-        ? "📋 Pedidos e pagamentos" : "🍳 Pedidos liberados para preparo";
+        ? "📋 Pedidos ativos" : "🍳 Pedidos liberados para preparo";
 
     ouvirPedidos();
 });
 
 function ouvirPedidos() {
-    const lista = $("pedidos");
-    lista.innerHTML = '<div class="vazio">Carregando pedidos...</div>';
+    const listaAtivos = $("pedidos");
+    listaAtivos.innerHTML = '<div class="vazio">Carregando pedidos...</div>';
 
+    // O financeiro lê todos os pedidos para separar ativos e finalizados.
+    // A cozinha recebe somente pedidos liberados pelo financeiro.
     let consulta = db.collection("pedidos");
-
     if (funcaoAtual === "cozinha") {
         consulta = consulta.where("liberado", "==", true);
     }
 
     pararPedidos = consulta.onSnapshot(snapshot => {
-        lista.innerHTML = "";
+        const todos = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}));
 
-        if (snapshot.empty) {
-            lista.innerHTML = `<div class="vazio">Nenhum pedido disponível neste momento.</div>`;
-            $("contador").textContent = "0 pedidos";
-            return;
-        }
+        const ativos = todos.filter(p => p.finalizado !== true);
+        const finalizados = todos.filter(p => p.finalizado === true);
 
-        const pedidos = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}));
+        // A cozinha não exibe pedidos já finalizados.
+        const ativosVisiveis = funcaoAtual === "cozinha"
+            ? ativos.filter(p => p.liberado === true)
+            : ativos;
 
-        pedidos.sort((a,b) =>
+        ativosVisiveis.sort((a,b) =>
             (a.criadoEm?.toMillis?.() || 0) - (b.criadoEm?.toMillis?.() || 0)
         );
 
-        pedidos.forEach(p => lista.appendChild(montarCartao(p)));
-
-        const ativos = pedidos.filter(p =>
-            funcaoAtual === "financeiro"
-                ? p.pagamentoStatus !== "confirmado"
-                : p.statusCozinha !== "entregue"
-        ).length;
+        listaAtivos.innerHTML = "";
+        if (!ativosVisiveis.length) {
+            listaAtivos.innerHTML = '<div class="vazio">Nenhum pedido ativo neste momento.</div>';
+        } else {
+            ativosVisiveis.forEach(p => listaAtivos.appendChild(montarCartao(p, false)));
+        }
 
         $("contador").textContent =
-            ativos + (ativos === 1 ? " pedido pendente" : " pedidos pendentes");
+            ativosVisiveis.length + (ativosVisiveis.length === 1 ? " pedido ativo" : " pedidos ativos");
+
+        if (funcaoAtual === "financeiro") {
+            finalizados.sort((a,b) =>
+                (b.finalizadoEm?.toMillis?.() || 0) - (a.finalizadoEm?.toMillis?.() || 0)
+            );
+
+            $("historico").innerHTML = "";
+            if (!finalizados.length) {
+                $("historico").innerHTML = '<div class="vazio">Ainda não há pedidos finalizados.</div>';
+            } else {
+                finalizados.forEach(p => $("historico").appendChild(montarCartao(p, true)));
+            }
+
+            $("contadorHistorico").textContent =
+                finalizados.length + (finalizados.length === 1 ? " finalizado" : " finalizados");
+        }
     }, erro => {
         console.error(erro);
-        lista.innerHTML = `<div class="vazio">Erro ao carregar pedidos. Confira as regras do Firestore.</div>`;
+        listaAtivos.innerHTML = '<div class="vazio">Erro ao carregar pedidos. Confira as regras do Firestore.</div>';
     });
 }
 
-function montarCartao(p) {
+function montarCartao(p, noHistorico) {
     const card = document.createElement("div");
     const status = p.statusCozinha || "novo";
     card.className = "pedido " + status;
@@ -298,7 +316,10 @@ function montarCartao(p) {
 
     let botoes = "";
 
-    if (funcaoAtual === "financeiro") {
+    if (noHistorico) {
+        botoes = `<div class="observacao">🗄️ Pedido finalizado e salvo no banco de dados.</div>
+                  <div class="data-finalizacao">Finalizado em: ${escaparHTML(dataFormatada(p.finalizadoEm))}</div>`;
+    } else if (funcaoAtual === "financeiro") {
         botoes = p.liberado
             ? `<div class="observacao">✅ Pagamento confirmado. Pedido liberado para a cozinha.</div>`
             : `<div class="observacao">⏳ Pagamento aguardando confirmação.</div>
@@ -310,8 +331,10 @@ function montarCartao(p) {
                 <button class="btn-preparar" data-acao="preparando">🍳 Preparar</button>
                 <button class="btn-pronto" data-acao="pronto">✅ Pronto</button>
                 <button class="btn-entregue" data-acao="entregue">📦 Entregue</button>
-                <button type="button" class="btn-salvar">✓ Finalizar e salvar pedido</button>
-            </div>`;
+            </div>
+            ${status === "entregue"
+                ? `<button type="button" class="btn-finalizar" data-acao="finalizar">✓ Finalizar e salvar pedido</button>`
+                : `<div class="observacao" style="margin-top:12px">Para finalizar, marque o pedido como Entregue.</div>`}`;
     }
 
     card.innerHTML = `
@@ -346,26 +369,40 @@ async function executarAcao(pedido, acao) {
                 alert("Somente o financeiro pode liberar pedidos.");
                 return;
             }
-
             if (!confirm("Confirma que o pagamento foi recebido?")) return;
 
-            await ref.update({
-                pagamentoStatus:"confirmado",
-                liberado:true
-            });
-
+            await ref.update({pagamentoStatus:"confirmado",liberado:true});
             alert("Pagamento confirmado e pedido liberado para a cozinha!");
             return;
         }
 
-        if (funcaoAtual !== "cozinha") {
-            alert("Somente a cozinha pode atualizar o preparo.");
+        if (["preparando","pronto","entregue"].includes(acao)) {
+            if (funcaoAtual !== "cozinha") {
+                alert("Somente a cozinha pode atualizar o preparo.");
+                return;
+            }
+            await ref.update({statusCozinha:acao});
             return;
         }
 
-        if (!["preparando","pronto","entregue"].includes(acao)) return;
+        if (acao === "finalizar") {
+            if (funcaoAtual !== "cozinha") {
+                alert("Somente a cozinha pode finalizar o pedido.");
+                return;
+            }
+            if (pedido.statusCozinha !== "entregue") {
+                alert("Marque o pedido como Entregue antes de finalizar.");
+                return;
+            }
+            if (!confirm("Finalizar e arquivar este pedido? Ele sairá da lista ativa e ficará no histórico do financeiro.")) return;
 
-        await ref.update({statusCozinha:acao});
+            await ref.update({
+                finalizado:true,
+                finalizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+            });
+
+            alert("Pedido finalizado e salvo no histórico!");
+        }
     } catch (erro) {
         console.error(erro);
         alert("Não foi possível salvar. Confira as regras do Firestore.");
@@ -455,6 +492,8 @@ async function organizarPedido() {
             pagamentoStatus:"pendente",
             liberado:false,
             statusCozinha:"novo",
+            finalizado:false,
+            finalizadoEm:null,
             observacao:"Pedido recebido pelo WhatsApp.",
             criadoPor:usuarioAtual.uid,
             criadoEm:firebase.firestore.FieldValue.serverTimestamp()
