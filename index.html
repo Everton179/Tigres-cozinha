@@ -1,0 +1,947 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tigres Food - Cozinha</title>
+
+<style>
+/* =========================================
+   1. CONFIGURAÇÕES GERAIS DO SITE
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+    background: #030562;
+    color: #f8fafc;
+    min-height: 100vh;
+}
+
+/* =========================================
+   2. CABEÇALHO E LOGOTIPO
+   ========================================= */
+
+header {
+    background: #080b10;
+    border-bottom: 1px solid #303946;
+    padding: 20px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 6px 22px #0005;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: 800;
+    color: #60a5fa;
+    letter-spacing: .5px;
+}
+
+.logo span {
+    color: #fff;
+}
+
+.cozinha {
+    color: #aab6c5;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+/* =========================================
+   3. ÁREA PRINCIPAL
+   ========================================= */
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 32px auto;
+}
+
+/* Área para receber a mensagem do WhatsApp */
+
+.entrada {
+    background: #f8fafc;
+    color: #182230;
+    border: 1px solid #d5dde7;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 32px;
+    box-shadow: 0 10px 28px #0003;
+}
+
+.entrada h2 {
+    color: #111827;
+    font-size: 21px;
+    margin-bottom: 10px;
+}
+
+.entrada p {
+    color: #050505;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* Campo para colar a mensagem do pedido */
+
+textarea {
+    width: 100%;
+    min-height: 160px;
+    resize: vertical;
+    background: #fff;
+    color: #090909;
+    border: 2px solid #070707;
+    border-radius: 10px;
+    padding: 16px;
+    outline: none;
+    font-size: 14px;
+    line-height: 1.6;
+    transition: .2s;
+}
+
+textarea::placeholder {
+    color: #7a8797;
+}
+
+textarea:focus {
+    border-color: #3478d4;
+    box-shadow: 0 0 0 3px #3478d422;
+}
+
+/* Botão para organizar a mensagem recebida */
+
+button {
+    font-family: inherit;
+}
+
+.btn-organizar {
+    margin-top: 14px;
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #080808;
+    border-radius: 9px;
+    background: #5091ec;
+    color: #fff;
+    font-weight: 750;
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-organizar:hover {
+    background: #141bcf;
+    transform: translateY(-1px);
+}
+
+/* =========================================
+   4. TÍTULO E CONTADOR DOS PEDIDOS
+   ========================================= */
+
+.titulo-pedidos {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.titulo-pedidos h2 {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.contador {
+    background: #202a37;
+    border: 1px solid #39485b;
+    color: #dbeafe;
+    padding: 8px 14px;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* Organização dos cartões dos pedidos */
+
+#pedidos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 20px;
+    align-items: start;
+}
+
+/* =========================================
+   5. APARÊNCIA DOS CARTÕES DE PEDIDO
+   ========================================= */
+
+.pedido {
+    background: #f8fafc;
+    color: #182230;
+    border: 1px solid #d5dde7;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 7px 22px #0003;
+    transition: .2s;
+}
+
+.pedido:hover {
+    border-color: #6b9fe2;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px #0004;
+}
+
+/* Borda conforme o andamento do pedido */
+
+.pedido.novo {
+    border-color: #3478d4;
+    box-shadow: 0 0 0 1px #3478d41f, 0 8px 24px #0003;
+}
+
+.pedido.preparando {
+    border-color: #2563EB;
+}
+
+.pedido.pronto {
+    border-color: #16A34A;
+}
+
+.pedido.entregue {
+    border-color: #64748b;
+    opacity: .85;
+}
+
+/* Cabeçalho com cliente e status */
+
+.pedido-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.numero {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    overflow-wrap: anywhere;
+}
+
+/* Nome do cliente e número da mesa */
+
+.dados-cliente {
+    font-size: 18px;
+    font-weight: 800;
+    color: #111827;
+    overflow-wrap: anywhere;
+}
+
+.dados-mesa {
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 5px;
+    color: #475569;
+}
+
+/* Etiqueta que mostra o status atual */
+
+.status {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    padding: 7px 10px;
+    border-radius: 6px;
+    background: #e7f0fc;
+    color: #245a9f;
+    border: 1px solid #c8dcf6;
+}
+
+.preparando .status {
+    background: #dbeafe;
+    color: #1e4e8c;
+}
+
+.pronto .status {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.entregue .status {
+    background: #e5e7eb;
+    color: #374151;
+    border-color: #cbd5e1;
+}
+
+/* =========================================
+   6. ITENS, VALORES E INFORMAÇÕES DO PEDIDO
+   ========================================= */
+
+.itens {
+    border-top: 1px solid #dce2e9;
+    border-bottom: 1px solid #dce2e9;
+    padding: 13px 0;
+    margin-bottom: 16px;
+}
+
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 9px 0;
+    font-size: 14px;
+    color: #354254;
+    line-height: 1.5;
+}
+
+.item strong {
+    color: #245fae;
+    margin-right: 5px;
+}
+
+/* Valor total */
+
+.total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #182230;
+    margin-bottom: 15px;
+}
+
+.total span:last-child {
+    color: #245fae;
+}
+
+/* Informações de pagamento e observações */
+
+.pagamento,
+.observacao {
+    border-radius: 9px;
+    padding: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.pagamento {
+    background: #0a0a0a;
+    border: 1px solid #dbe2eb;
+    color: #f3f3f3;
+}
+
+.observacao {
+    background: #111111;
+    border: 1px solid #dbe2eb;
+    color: #f1f1f1;
+    margin-bottom: 17px;
+}
+
+/* =========================================
+   7. QUATRO BOTÕES DE AÇÃO
+   ========================================= */
+
+/* Organização dos botões em duas colunas */
+
+.acoes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+}
+
+.acoes button {
+    border: 1px solid transparent;
+    padding: 11px 6px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    transition: .2s;
+}
+
+.acoes button:hover {
+    transform: translateY(-1px);
+}
+
+/* ETAPA 1 — INICIAR O PREPARO: AZUL */
+
+.btn-preparar {
+    background: #2563EB;
+    color: #FFFFFF;
+    border: 1px solid #1D4ED8 !important;
+}
+
+.btn-preparar:hover {
+    background: #072372;
+}
+
+/* ETAPA 2 — PEDIDO PRONTO: VERDE */
+
+.btn-pronto {
+    background: #34e174;
+    color: #FFFFFF;
+    border: 1px solid #15803D !important;
+}
+
+.btn-pronto:hover {
+    background: #126e34;
+}
+
+/* ETAPA 3 — PEDIDO ENTREGUE: CINZA-AZULADO */
+
+.btn-entregue {
+    background: #6d6b6b;
+    color: #FFFFFF;
+    border: 1px solid #334155 !important;
+}
+
+.btn-entregue:hover {
+    background: #0e0e0e;
+}
+
+/* ETAPA 4 — FINALIZAR E SALVAR: ROXO
+   Por enquanto, este botão não executa nenhuma função. */
+
+.btn-salvar {
+    background: #8f52f9;
+    color: #FFFFFF;
+    border: 1px solid #6D28D9 !important;
+}
+
+.btn-salvar:hover {
+    background: #330283;
+}
+
+/* =========================================
+   8. MENSAGEM QUANDO NÃO HÁ PEDIDOS
+   ========================================= */
+
+.vazio {
+    text-align: center;
+    color: #526176;
+    padding: 50px 20px;
+    border: 2px dashed #64748b;
+    border-radius: 14px;
+    background: #f0f1f3;
+    grid-column: 1 / -1;
+    line-height: 1.7;
+}
+
+/* =========================================
+   9. AJUSTES PARA CELULARES
+   ========================================= */
+
+@media (max-width: 600px) {
+    header {
+        padding: 16px 5%;
+    }
+
+    .logo {
+        font-size: 19px;
+    }
+
+    .cozinha {
+        font-size: 10px;
+        letter-spacing: .5px;
+    }
+
+    .container {
+        width: 92%;
+        margin: 22px auto;
+    }
+
+    .entrada {
+        padding: 18px;
+    }
+
+    .titulo-pedidos h2 {
+        font-size: 19px;
+    }
+
+    #pedidos {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .pedido {
+        padding: 17px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- =========================================
+     10. CABEÇALHO DO TIGRES FOOD
+     ========================================= -->
+
+<header>
+    <div class="logo">🐯 TIGRES <span>FOOD</span></div>
+    <div class="cozinha">PAINEL DA COZINHA</div>
+</header>
+
+<div class="container">
+
+    <!-- =====================================
+         11. RECEBER E ORGANIZAR PEDIDOS
+         ===================================== -->
+
+    <div class="entrada">
+        <h2>📥 Receber pedido</h2>
+        <p>Copie a mensagem recebida no WhatsApp e cole abaixo.</p>
+
+        <textarea id="mensagem"
+            placeholder="Cole aqui a mensagem do WhatsApp..."></textarea>
+
+        <button class="btn-organizar" onclick="organizarPedido()">
+            🐯 ORGANIZAR PEDIDO
+        </button>
+    </div>
+
+    <!-- =====================================
+         12. TÍTULO E CONTADOR
+         ===================================== -->
+
+    <div class="titulo-pedidos">
+        <h2>📋 Pedidos</h2>
+        <div class="contador" id="contador">0 pedidos</div>
+    </div>
+
+    <!-- Os cartões dos pedidos aparecem aqui -->
+
+    <div id="pedidos">
+        <div class="vazio" id="vazio">
+            Nenhum pedido recebido ainda.
+            <br><br>
+            Cole uma mensagem do WhatsApp acima.
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+/* ===========================================
+   13. CONFIGURAÇÕES DO JAVASCRIPT
+   =========================================== */
+
+// A numeração começa em 1 ao abrir a página.
+// Os pedidos não serão salvos no navegador.
+let numeroPedido = 1;
+
+
+/* ===========================================
+   14. PROTEGER OS TEXTOS INSERIDOS NO HTML
+   =========================================== */
+
+function escaparHTML(texto) {
+    return String(texto).replace(/[&<>"']/g, caractere => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+    })[caractere]);
+}
+
+
+/* ===========================================
+   15. ORGANIZAR A MENSAGEM DO WHATSAPP
+   =========================================== */
+
+function organizarPedido() {
+
+    const campoMensagem = document.getElementById("mensagem");
+    const texto = campoMensagem.value.trim();
+
+    if (!texto) {
+        alert("Cole a mensagem do WhatsApp primeiro.");
+        return;
+    }
+
+    const linhas = texto.split(/\r?\n/);
+
+    let itens = [];
+    let total = 0;
+
+    // Identifica o nome do cliente.
+    const linhaCliente = linhas.find(linha =>
+        /^(nome do cliente|cliente|nome)\s*:/i.test(linha.trim())
+    );
+
+    const nomeCliente = linhaCliente
+        ? linhaCliente.replace(
+            /^(nome do cliente|cliente|nome)\s*:/i, ""
+        ).trim()
+        : "";
+
+    // Identifica o número da mesa.
+    const linhaMesa = linhas.find(linha =>
+        /^(número da mesa|numero da mesa|mesa)\s*:/i.test(linha.trim())
+    );
+
+    const mesa = linhaMesa
+        ? linhaMesa.replace(
+            /^(número da mesa|numero da mesa|mesa)\s*:/i, ""
+        ).trim()
+        : "";
+
+    // Confere se o nome e a mesa foram informados.
+    if (!nomeCliente || !mesa) {
+        alert(
+            "Não encontrei o nome do cliente ou o número da mesa.\n\n" +
+            "A mensagem precisa conter:\n" +
+            "Nome do cliente: Maria Silva\n" +
+            "Mesa: 04"
+        );
+        return;
+    }
+
+    // Sabores aceitos pelo sistema.
+    const sabores = [
+        "pastel de pizza",
+        "pastel de frango com catupiry",
+        "pastel de carne com queijo",
+        "pastel de nutella"
+    ];
+
+    // Procura os produtos na mensagem.
+    linhas.forEach(linha => {
+
+        const linhaMinuscula = linha.toLowerCase();
+
+        if (sabores.some(sabor => linhaMinuscula.includes(sabor))) {
+
+            const partes = linha.split("|");
+
+            if (partes.length >= 3) {
+
+                const nome = partes[0]
+                    .replace("•", "")
+                    .trim();
+
+                const quantidadeTexto = partes[1]
+                    .replace(/Quantidade:/i, "")
+                    .trim();
+
+                const precoTexto = partes[2]
+                    .replace("R$", "")
+                    .trim();
+
+                const quantidade = parseInt(quantidadeTexto, 10);
+
+                const preco = parseFloat(
+                    precoTexto.replace(/\./g, "").replace(",", ".")
+                );
+
+                if (
+                    !isNaN(quantidade) &&
+                    quantidade > 0 &&
+                    !isNaN(preco) &&
+                    preco >= 0
+                ) {
+                    itens.push({
+                        nome: nome,
+                        quantidade: quantidade,
+                        preco: preco
+                    });
+
+                    total += preco;
+                }
+            }
+        }
+    });
+
+    // Procura o total informado na mensagem.
+    const linhaTotal = linhas.find(linha =>
+        /^total\s*:/i.test(linha.trim())
+    );
+
+    if (linhaTotal) {
+
+        const encontrado = linhaTotal.match(/R\$\s*([\d.,]+)/);
+
+        if (encontrado) {
+            total = parseFloat(
+                encontrado[1].replace(/\./g, "").replace(",", ".")
+            );
+        }
+    }
+
+    // Impede a criação de um pedido sem produtos reconhecidos.
+    if (itens.length === 0) {
+        alert(
+            "Não consegui encontrar os pastéis.\n\n" +
+            "Exemplo de item:\n" +
+            "• Pastel de Pizza | Quantidade: 2 | R$ 20,00"
+        );
+        return;
+    }
+
+    // Cria o cartão do pedido.
+    criarPedido(itens, total, nomeCliente, mesa);
+
+    // Limpa o campo depois de organizar o pedido.
+    campoMensagem.value = "";
+}
+
+
+/* ===========================================
+   16. CRIAR O CARTÃO DO PEDIDO
+   =========================================== */
+
+function criarPedido(itens, total, nomeCliente, mesa) {
+
+    const listaPedidos = document.getElementById("pedidos");
+    const vazio = document.getElementById("vazio");
+
+    // Remove a mensagem inicial quando chega o primeiro pedido.
+    if (vazio) {
+        vazio.remove();
+    }
+
+    // Reserva o número deste pedido.
+    const numeroAtual = numeroPedido;
+    numeroPedido++;
+
+    const pedido = document.createElement("div");
+
+    pedido.className = "pedido novo";
+    pedido.dataset.numero = String(numeroAtual);
+    pedido.dataset.cliente = nomeCliente;
+    pedido.dataset.mesa = mesa;
+
+    let itensHTML = "";
+
+    // Monta a lista de produtos.
+    itens.forEach(item => {
+
+        itensHTML += `
+            <div class="item">
+                <span>
+                    <strong>${escaparHTML(item.quantidade)}x</strong>
+                    ${escaparHTML(item.nome)}
+                </span>
+
+                <span>
+                    R$ ${item.preco.toFixed(2).replace(".", ",")}
+                </span>
+            </div>
+        `;
+    });
+
+    // Monta o cartão com os quatro botões.
+    pedido.innerHTML = `
+        <div class="pedido-topo">
+
+            <div>
+                <div class="numero">Pedido ${numeroAtual}</div>
+
+                <div class="dados-cliente">
+                    ${escaparHTML(nomeCliente)}
+
+                    <div class="dados-mesa">
+                        Mesa ${escaparHTML(mesa)}
+                    </div>
+                </div>
+            </div>
+
+            <div class="status">NOVO</div>
+
+        </div>
+
+        <div class="itens">
+            ${itensHTML}
+        </div>
+
+        <div class="total">
+            <span>Total</span>
+            <span>R$ ${total.toFixed(2).replace(".", ",")}</span>
+        </div>
+
+        <div class="pagamento">
+            💰 <strong>Pagamento:</strong> A confirmar
+        </div>
+
+        <div class="observacao">
+            📝 Pedido recebido pelo WhatsApp.
+        </div>
+
+        <div class="acoes">
+
+            <button class="btn-preparar"
+                onclick="prepararPedido(this)">
+                🍳 Preparar
+            </button>
+
+            <button class="btn-pronto"
+                onclick="prontoPedido(this)">
+                ✅ Pronto
+            </button>
+
+            <button class="btn-entregue"
+                onclick="entregarPedido(this)">
+                📦 Entregue
+            </button>
+
+            <!-- Botão visual, sem função de salvar por enquanto -->
+            <button type="button" class="btn-salvar">
+                ✓ Finalizar e salvar pedido
+            </button>
+
+        </div>
+    `;
+
+    // Adiciona o cartão e mantém os pedidos em ordem numérica.
+    listaPedidos.appendChild(pedido);
+    ordenarPedidos();
+
+    atualizarContador();
+    tocarAlerta();
+}
+
+
+/* ===========================================
+   17. MANTER OS PEDIDOS EM ORDEM CRESCENTE
+   =========================================== */
+
+// Pedido 1 fica primeiro, seguido do Pedido 2, Pedido 3 etc.
+function ordenarPedidos() {
+
+    const listaPedidos = document.getElementById("pedidos");
+
+    const cartoes = Array.from(
+        listaPedidos.querySelectorAll(".pedido")
+    );
+
+    cartoes.sort((a, b) => {
+        return Number(a.dataset.numero) - Number(b.dataset.numero);
+    });
+
+    cartoes.forEach(cartao => {
+        listaPedidos.appendChild(cartao);
+    });
+}
+
+
+/* ===========================================
+   18. ETAPA 1 — INICIAR O PREPARO
+   =========================================== */
+
+function prepararPedido(botao) {
+
+    const pedido = botao.closest(".pedido");
+
+    pedido.classList.remove("novo", "pronto", "entregue");
+    pedido.classList.add("preparando");
+
+    pedido.querySelector(".status").textContent = "PREPARANDO";
+}
+
+
+/* ===========================================
+   19. ETAPA 2 — PEDIDO PRONTO
+   =========================================== */
+
+function prontoPedido(botao) {
+
+    const pedido = botao.closest(".pedido");
+
+    pedido.classList.remove("novo", "preparando", "entregue");
+    pedido.classList.add("pronto");
+
+    pedido.querySelector(".status").textContent = "PRONTO";
+}
+
+
+/* ===========================================
+   20. ETAPA 3 — PEDIDO ENTREGUE
+   =========================================== */
+
+function entregarPedido(botao) {
+
+    const pedido = botao.closest(".pedido");
+
+    pedido.classList.remove("novo", "preparando", "pronto");
+    pedido.classList.add("entregue");
+
+    pedido.querySelector(".status").textContent = "ENTREGUE";
+
+    atualizarContador();
+}
+
+
+/* ===========================================
+   21. CONTADOR DE PEDIDOS NÃO ENTREGUES
+   =========================================== */
+
+function atualizarContador() {
+
+    const quantidade = document.querySelectorAll(
+        "#pedidos .pedido:not(.entregue)"
+    ).length;
+
+    document.getElementById("contador").textContent =
+        quantidade + (quantidade === 1 ? " pedido" : " pedidos");
+}
+
+
+/* ===========================================
+   22. SOM DE ALERTA AO RECEBER UM PEDIDO
+   =========================================== */
+
+function tocarAlerta() {
+
+    try {
+
+        const audio = new AudioContext();
+        const oscilador = audio.createOscillator();
+        const volume = audio.createGain();
+
+        oscilador.connect(volume);
+        volume.connect(audio.destination);
+
+        oscilador.frequency.value = 660;
+        volume.gain.value = 0.08;
+
+        oscilador.start();
+        oscilador.stop(audio.currentTime + 0.2);
+
+        oscilador.onended = () => audio.close();
+
+    } catch (erro) {
+
+        console.log("Som de alerta indisponível.");
+    }
+}
+
+
+/* ===========================================
+   23. INICIALIZAÇÃO DO PAINEL
+   =========================================== */
+
+// Não recupera pedidos antigos.
+// A página começa vazia, pronta para receber pedidos.
+atualizarContador();
+
+</script>
+
+</body>
+</html>
