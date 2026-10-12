@@ -7,505 +7,1101 @@
 <title>Tigres Food - Painel</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:"Segoe UI",Arial,sans-serif}
-body{background:#030562;color:#f8fafc;min-height:100vh}
-header{background:#080b10;border-bottom:1px solid #303946;padding:20px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10;box-shadow:0 6px 22px #0005}
-.logo{font-size:23px;font-weight:800;color:#60a5fa;letter-spacing:.5px}
-.logo span{color:#fff}
-.cozinha{color:#aab6c5;font-size:13px;font-weight:700;letter-spacing:1.4px}
-.container{width:92%;max-width:1200px;margin:32px auto}
-.entrada{background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:16px;padding:25px;margin-bottom:32px;box-shadow:0 10px 28px #0003}
-.entrada h2{color:#111827;font-size:21px;margin-bottom:10px}
-.entrada p{color:#050505;font-size:15px;line-height:1.6;margin-bottom:18px}
-textarea{width:100%;min-height:160px;resize:vertical;background:#fff;color:#090909;border:2px solid #070707;border-radius:10px;padding:16px;outline:none;font-size:14px;line-height:1.6}
-textarea::placeholder{color:#7a8797}
-textarea:focus{border-color:#3478d4;box-shadow:0 0 0 3px #3478d422}
-button{font-family:inherit}
-.btn-organizar{margin-top:14px;width:100%;padding:14px;border:2px solid #080808;border-radius:9px;background:#5091ec;color:#fff;font-weight:750;font-size:14px;cursor:pointer;transition:.2s}
-.btn-organizar:hover{background:#141bcf;transform:translateY(-1px)}
-.titulo-pedidos{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 20px}
-.titulo-pedidos h2{font-size:22px;font-weight:800}
-.contador{background:#202a37;border:1px solid #39485b;color:#dbeafe;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:800}
-#pedidos,#historico{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px;align-items:start}
-.pedido{background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:14px;padding:20px;box-shadow:0 7px 22px #0003;transition:.2s}
-.pedido:hover{border-color:#6b9fe2;transform:translateY(-2px);box-shadow:0 12px 28px #0004}
-.pedido.novo{border-color:#3478d4}
-.pedido.preparando{border-color:#2563EB}
-.pedido.pronto{border-color:#16A34A}
-.pedido.entregue{border-color:#64748b}
-.pedido-topo{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:18px}
-.numero{font-size:18px;font-weight:800;color:#111827;overflow-wrap:anywhere}
-.dados-cliente{font-size:18px;font-weight:800;color:#111827;overflow-wrap:anywhere}
-.dados-mesa{font-size:14px;font-weight:700;margin-top:5px;color:#475569}
-.status{flex-shrink:0;font-size:10px;font-weight:800;letter-spacing:.6px;padding:7px 10px;border-radius:6px;background:#e7f0fc;color:#245a9f;border:1px solid #c8dcf6}
-.preparando .status{background:#dbeafe;color:#1e4e8c}
-.pronto .status{background:#dcfce7;color:#166534;border-color:#bbf7d0}
-.entregue .status{background:#e5e7eb;color:#374151;border-color:#cbd5e1}
-.itens{border-top:1px solid #dce2e9;border-bottom:1px solid #dce2e9;padding:13px 0;margin-bottom:16px}
-.item{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:9px 0;font-size:14px;color:#354254;line-height:1.5}
-.item strong{color:#245fae;margin-right:5px}
-.total{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:16px;font-weight:800;color:#182230;margin-bottom:15px}
-.total span:last-child{color:#245fae}
-.pagamento,.observacao{border-radius:9px;padding:12px;font-size:13px;line-height:1.6;margin-bottom:12px}
-.pagamento{background:#0a0a0a;border:1px solid #dbe2eb;color:#f3f3f3}
-.observacao{background:#111;border:1px solid #dbe2eb;color:#f1f1f1;margin-bottom:17px}
-.acoes{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.acoes button{border:1px solid transparent;padding:11px 6px;border-radius:8px;cursor:pointer;font-weight:700;font-size:12px;transition:.2s}
-.acoes button:hover{transform:translateY(-1px)}
-.btn-preparar{background:#2563EB;color:#fff;border:1px solid #1D4ED8!important}
-.btn-preparar:hover{background:#072372}
-.btn-pronto{background:#34e174;color:#fff;border:1px solid #15803D!important}
-.btn-pronto:hover{background:#126e34}
-.btn-entregue{background:#6d6b6b;color:#fff;border:1px solid #334155!important}
-.btn-entregue:hover{background:#0e0e0e}
-.btn-salvar{background:#8f52f9;color:#fff;border:1px solid #6D28D9!important;grid-column:1/-1}
-.btn-salvar:hover{background:#330283}
-.btn-liberar{background:#15803d!important;color:white}
-.btn-finalizar{width:100%;margin-top:12px;background:#6d28d9;color:#fff;border:1px solid #5b21b6;border-radius:8px;padding:12px;font-weight:800;cursor:pointer}
-.btn-finalizar:hover{background:#4c1d95}
-.vazio{text-align:center;color:#526176;padding:35px 20px;border:2px dashed #64748b;border-radius:14px;background:#f0f1f3;grid-column:1/-1;line-height:1.7}
-.login-box{width:92%;max-width:430px;margin:55px auto;padding:28px;background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:16px;box-shadow:0 10px 28px #0004}
-.login-box h2{margin-bottom:10px;color:#111827}
-.login-box p{margin-bottom:18px;line-height:1.5;color:#475569}
-.login-box input{width:100%;padding:13px;margin-bottom:12px;border:1px solid #94a3b8;border-radius:8px;font-size:15px}
-.login-box button,.btn-sair{padding:13px;border:0;border-radius:8px;background:#2563eb;color:white;font-weight:800;cursor:pointer}
-.login-box button{width:100%}
-.btn-sair{background:#334155;padding:9px 13px}
-.mensagem-login{margin-top:12px;font-size:13px;overflow-wrap:anywhere;color:#b91c1c}
-.area-usuario{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 5%;background:#080b10;color:#dbeafe;font-size:13px}
-.data-finalizacao{font-size:12px;color:#64748b;margin:10px 0}
-@media(max-width:600px){
- header{padding:16px 5%}
- .logo{font-size:19px}
- .cozinha{font-size:10px;letter-spacing:.5px}
- .container{width:92%;margin:22px auto}
- .entrada{padding:18px}
- .titulo-pedidos h2{font-size:19px}
- #pedidos,#historico{grid-template-columns:1fr;gap:15px}
- .pedido{padding:17px}
- .area-usuario{flex-wrap:wrap}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  background: #0b0f14;
+  color: #f5f7fa;
+  min-height: 100vh;
+}
+
+header {
+  background: #11151b;
+  border-bottom: 1px solid #303946;
+  padding: 20px 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 5px 20px #0005;
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 800;
+  color: #3b82f6;
+}
+
+.logo span { color: #f5f7fa; }
+
+.cozinha {
+  color: #b5c0ce;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-align: right;
+}
+
+.container {
+  width: 92%;
+  max-width: 1200px;
+  margin: 30px auto;
+}
+
+.card, .entrada, .pedido {
+  background: #151a21;
+  border: 1px solid #303946;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 22px;
+  box-shadow: 0 7px 22px #0004;
+}
+
+h2 { margin-bottom: 12px; }
+
+p {
+  color: #b5c0ce;
+  line-height: 1.6;
+}
+
+label {
+  display: block;
+  margin: 14px 0 7px;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+input, textarea {
+  width: 100%;
+  background: #0f141b;
+  color: #f5f7fa;
+  border: 1px solid #3a4655;
+  border-radius: 10px;
+  padding: 13px;
+  outline: none;
+  font-size: 14px;
+}
+
+textarea {
+  min-height: 155px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+input:focus, textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px #3b82f622;
+}
+
+button {
+  border: 1px solid transparent;
+  border-radius: 9px;
+  padding: 12px 15px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 13px;
+  transition: .2s;
+}
+
+button:hover { filter: brightness(1.12); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+
+.btn-principal {
+  width: 100%;
+  margin-top: 14px;
+  background: #2563eb;
+  color: white;
+}
+
+.btn-sair {
+  background: #252d38;
+  color: #e2e8f0;
+  border-color: #46515f;
+}
+
+.btn-preparar { background: #2563eb; color: white; }
+.btn-pronto { background: #16a34a; color: white; }
+.btn-entregue { background: #ea580c; color: white; }
+.btn-salvar { background: #7c3aed; color: white; }
+.btn-confirmar { background: #16a34a; color: white; }
+
+.mensagem {
+  display: none;
+  padding: 12px;
+  border-radius: 9px;
+  margin: 12px 0;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.mensagem.erro {
+  display: block;
+  background: #3b171b;
+  border: 1px solid #9f333d;
+  color: #fecaca;
+}
+
+.mensagem.sucesso {
+  display: block;
+  background: #123322;
+  border: 1px solid #247747;
+  color: #bbf7d0;
+}
+
+.topo-pedidos {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 18px;
+  flex-wrap: wrap;
+}
+
+.contador {
+  background: #1c3558;
+  border: 1px solid #24466f;
+  color: #bfdbfe;
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.abas {
+  display: flex;
+  gap: 10px;
+  margin: 18px 0;
+  flex-wrap: wrap;
+}
+
+.aba {
+  background: #151a21;
+  border-color: #303946;
+  color: #cbd5e1;
+}
+
+.aba.ativa {
+  background: #1d4ed8;
+  color: white;
+  border-color: #3b82f6;
+}
+
+#listaPedidos, #historico {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.pedido {
+  margin: 0;
+  transition: border-color .2s;
+  overflow-wrap: anywhere;
+}
+
+.pedido.novo { border-color: #3b82f6; }
+.pedido.preparando { border-color: #2563eb; }
+.pedido.pronto { border-color: #16a34a; }
+.pedido.entregue { border-color: #ea580c; }
+
+.pedido-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.numero {
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.status {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 7px 9px;
+  border-radius: 7px;
+  background: #263445;
+  color: #bfdbfe;
+  white-space: nowrap;
+}
+
+.status.preparando { background: #1d4ed8; color: white; }
+.status.pronto { background: #166534; color: white; }
+.status.entregue { background: #9a3412; color: white; }
+.status.novo { background: #1e40af; color: white; }
+
+.itens {
+  border-top: 1px solid #303946;
+  border-bottom: 1px solid #303946;
+  padding: 12px 0;
+  margin-bottom: 15px;
+}
+
+.item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  color: #dbe3ed;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.item strong { color: #60a5fa; }
+
+.detalhes {
+  background: #0f141b;
+  border: 1px solid #303946;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 12px;
+  font-size: 13px;
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+
+.total {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 800;
+  margin: 15px 0;
+}
+
+.total span:last-child { color: #60a5fa; }
+
+.acoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+  margin-top: 15px;
+}
+
+.acoes button { width: 100%; }
+
+.vazio {
+  text-align: center;
+  color: #94a3b8;
+  padding: 35px 20px;
+  border: 1px dashed #46515f;
+  border-radius: 14px;
+  background: #11161d;
+  grid-column: 1 / -1;
+  line-height: 1.8;
+}
+
+.data-historico {
+  color: #86efac;
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.pequeno {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 12px;
+}
+
+#painel { display: none; }
+#painelFinanceiro { display: none; }
+#painelCozinha { display: none; }
+#secaoHistorico { display: none; }
+
+@media (max-width: 600px) {
+  header { padding: 16px 4%; }
+  .logo { font-size: 19px; }
+  .cozinha { font-size: 10px; }
+  .container { width: 92%; margin: 20px auto; }
+  .card, .entrada, .pedido { padding: 17px; }
+  #listaPedidos, #historico { grid-template-columns: 1fr; }
+  .acoes button { font-size: 12px; padding: 12px 5px; }
 }
 </style>
 </head>
 
 <body>
+
 <header>
-    <div class="logo">🐯 TIGRES <span>FOOD</span></div>
-    <div class="cozinha" id="tituloPainel">PAINEL DE ACESSO</div>
+  <div class="logo">🐯 TIGRES <span>FOOD</span></div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="cozinha" id="rotuloPainel">PAINEL DE PEDIDOS</div>
+    <button class="btn-sair" id="btnSair" style="display:none" onclick="sair()">Sair</button>
+  </div>
 </header>
 
-<div class="area-usuario" id="areaUsuario" style="display:none">
-    <span id="identificacaoUsuario"></span>
-    <button type="button" class="btn-sair" id="botaoSair">Sair do painel</button>
-</div>
+<div class="container">
 
-<div class="login-box" id="loginBox">
-    <h2>🐯 Acesso ao Tigres Food</h2>
-    <p>Entre com seu e-mail e senha autorizados.</p>
+  <!-- LOGIN -->
+  <section id="login" class="card">
+    <h2>🔐 Entrar no painel</h2>
+    <p>Entre com a conta autorizada do financeiro ou da cozinha.</p>
+
+    <div id="mensagemLogin" class="mensagem"></div>
+
     <form id="formLogin">
-        <input type="email" id="emailLogin" placeholder="Seu e-mail" autocomplete="username" required>
-        <input type="password" id="senhaLogin" placeholder="Sua senha" autocomplete="current-password" required>
-        <button type="submit">Entrar no painel</button>
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="username" required>
+
+      <label for="senha">Senha</label>
+      <input id="senha" type="password" autocomplete="current-password" required>
+
+      <button class="btn-principal" type="submit">Entrar</button>
     </form>
-    <div class="mensagem-login" id="mensagemLogin"></div>
-</div>
 
-<div class="container" id="appContainer" style="display:none">
-    <div class="entrada" id="entradaPedido">
-        <h2>📥 Receber pedido</h2>
-        <p>Cole a mensagem recebida no WhatsApp. Depois de cadastrar, confirme o pagamento para liberar o pedido à cozinha.</p>
-        <textarea id="mensagem" placeholder="Cole aqui a mensagem do WhatsApp..."></textarea>
-        <button class="btn-organizar" id="botaoOrganizar">🐯 CADASTRAR PEDIDO</button>
-    </div>
+    <p class="pequeno">
+      Use a conta já cadastrada no Firebase Authentication.
+    </p>
+  </section>
 
-    <div class="titulo-pedidos">
-        <h2 id="tituloPedidos">📋 Pedidos ativos</h2>
-        <div class="contador" id="contador">0 pedidos</div>
-    </div>
-    <div id="pedidos"><div class="vazio">Carregando pedidos...</div></div>
+  <!-- PAINEL AUTENTICADO -->
+  <section id="painel">
 
-    <section id="secaoHistorico" style="display:none">
-        <div class="titulo-pedidos">
-            <h2>🗄️ Histórico de pedidos finalizados</h2>
-            <div class="contador" id="contadorHistorico">0 finalizados</div>
+    <!-- FINANCEIRO -->
+    <div id="painelFinanceiro">
+
+      <section class="entrada">
+        <h2>📥 Cadastrar pedido</h2>
+        <p>
+          Cole aqui a mensagem recebida pelo WhatsApp.
+          Confira os dados e cadastre o pedido. Ele só irá para a cozinha
+          depois que você confirmar o pagamento.
+        </p>
+
+        <div id="mensagemFinanceiro" class="mensagem"></div>
+
+        <label for="mensagemWhatsApp">Mensagem do WhatsApp</label>
+        <textarea id="mensagemWhatsApp"
+          placeholder="Cole aqui a mensagem completa do cliente..."></textarea>
+
+        <button class="btn-principal" onclick="cadastrarPedido()">
+          ➕ Cadastrar pedido
+        </button>
+      </section>
+
+      <div class="abas">
+        <button class="aba ativa" id="abaAtivos" onclick="mostrarAba('ativos')">
+          📋 Pedidos ativos
+        </button>
+        <button class="aba" id="abaHistorico" onclick="mostrarAba('historico')">
+          🗂️ Histórico de pedidos
+        </button>
+      </div>
+
+      <section id="secaoAtivos">
+        <div class="topo-pedidos">
+          <h2>📋 Pedidos ativos</h2>
+          <div class="contador" id="contadorAtivos">0 pedidos</div>
         </div>
-        <div id="historico"><div class="vazio">Carregando histórico...</div></div>
-    </section>
+        <div id="listaPedidos"></div>
+      </section>
+
+      <section id="secaoHistorico">
+        <div class="topo-pedidos">
+          <h2>🗂️ Histórico de pedidos</h2>
+          <div class="contador" id="contadorHistorico">0 pedidos</div>
+        </div>
+        <p style="margin-bottom:18px">
+          Pedidos finalizados e salvos no Firestore. Esta tela é somente para consulta.
+        </p>
+        <div id="historico"></div>
+      </section>
+
+    </div>
+
+    <!-- COZINHA -->
+    <div id="painelCozinha">
+      <div class="topo-pedidos">
+        <h2>🍳 Pedidos liberados</h2>
+        <div class="contador" id="contadorCozinha">0 pedidos</div>
+      </div>
+      <p style="margin-bottom:18px">
+        Aqui aparecem somente pedidos liberados pelo financeiro após a confirmação do pagamento.
+      </p>
+      <div id="listaCozinha"></div>
+    </div>
+
+  </section>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
 
-<script>
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  updateDoc,
+  doc,
+  onSnapshot,
+  query,
+  where,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+/* =====================================
+   CONFIGURAÇÃO DO FIREBASE
+   ===================================== */
+
 const firebaseConfig = {
-    apiKey: "AIzaSyCS5gKfwC5LA6HYtwZEs9lm6Qu54QVC0Qw",
-    authDomain: "tigres-food.firebaseapp.com",
-    projectId: "tigres-food",
-    storageBucket: "tigres-food.firebasestorage.app",
-    messagingSenderId: "374947589802",
-    appId: "1:374947589802:web:db70442bc08353a45b2ad3",
-    measurementId: "G-N4NZ03TM9R"
+  apiKey: "AIzaSyCS5gKfwC5LA6HYtwZEs9lm6Qu54QVC0Qw",
+  authDomain: "tigres-food.firebaseapp.com",
+  projectId: "tigres-food",
+  storageBucket: "tigres-food.firebasestorage.app",
+  messagingSenderId: "374947589802",
+  appId: "1:374947589802:web:db70442bc08353a45b2ad3",
+  measurementId: "G-N4NZ03TM9R"
 };
 
-if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-
-const auth = firebase.auth();
-const db = firebase.firestore();
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
 
 const UID_FINANCEIRO = "VVFpmKhVwZUnZA2o1YTOyb18JbF2";
 const UID_COZINHA = "i9rSG8E5wONyBjmZzsJLJCubzzd2";
 
 let usuarioAtual = null;
-let funcaoAtual = null;
-let pararPedidos = null;
+let tipoUsuario = null;
+let cancelarEscuta = null;
+let pedidosAtuais = [];
+let historicoAtual = [];
+let abaAtual = "ativos";
 
-const $ = id => document.getElementById(id);
+/* =====================================
+   FUNÇÕES AUXILIARES
+   ===================================== */
 
-function escaparHTML(texto) {
-    return String(texto ?? "").replace(/[&<>"']/g, c => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-    })[c]);
+function mostrarMensagem(id, texto, tipo = "erro") {
+  const el = document.getElementById(id);
+  el.textContent = texto;
+  el.className = "mensagem " + tipo;
 }
 
-function dinheiro(valor) {
-    return Number(valor || 0).toLocaleString("pt-BR", {
-        style:"currency",currency:"BRL"
-    });
+function limparMensagem(id) {
+  const el = document.getElementById(id);
+  el.textContent = "";
+  el.className = "mensagem";
+}
+
+function escapar(valor) {
+  return String(valor ?? "").replace(/[&<>"']/g, letra => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[letra]);
+}
+
+function moeda(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
 }
 
 function dataFormatada(valor) {
-    if (!valor || typeof valor.toDate !== "function") return "Data não registrada";
-    return valor.toDate().toLocaleString("pt-BR");
+  if (!valor) return "Data não registrada";
+
+  const data = typeof valor.toDate === "function"
+    ? valor.toDate()
+    : new Date(valor);
+
+  if (Number.isNaN(data.getTime())) return "Data não registrada";
+
+  return data.toLocaleString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 
-$("formLogin").addEventListener("submit", async e => {
-    e.preventDefault();
-    $("mensagemLogin").textContent = "Verificando acesso...";
-    try {
-        await auth.signInWithEmailAndPassword(
-            $("emailLogin").value.trim(),
-            $("senhaLogin").value
-        );
-        $("senhaLogin").value = "";
-    } catch (erro) {
-        console.error(erro);
-        $("mensagemLogin").textContent =
-            "Não foi possível entrar. Confira o e-mail e a senha.";
-    }
+function nomeStatus(status) {
+  return ({
+    novo: "NOVO",
+    preparando: "PREPARANDO",
+    pronto: "PRONTO",
+    entregue: "ENTREGUE"
+  })[status] || "NOVO";
+}
+
+function ordenarPorData(lista) {
+  return [...lista].sort((a, b) => {
+    const dataA = a.criadoEm?.toMillis?.() || 0;
+    const dataB = b.criadoEm?.toMillis?.() || 0;
+    return dataB - dataA;
+  });
+}
+
+/* =====================================
+   LOGIN E LOGOUT
+   ===================================== */
+
+document.getElementById("formLogin").addEventListener("submit", async evento => {
+  evento.preventDefault();
+  limparMensagem("mensagemLogin");
+
+  const email = document.getElementById("email").value.trim();
+  const senha = document.getElementById("senha").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, senha);
+  } catch (erro) {
+    mostrarMensagem(
+      "mensagemLogin",
+      "Não foi possível entrar. Confira o e-mail e a senha da conta cadastrada no Firebase."
+    );
+  }
 });
 
-$("botaoSair").addEventListener("click", () => auth.signOut());
-$("botaoOrganizar").addEventListener("click", organizarPedido);
+async function sair() {
+  if (cancelarEscuta) {
+    cancelarEscuta();
+    cancelarEscuta = null;
+  }
 
-auth.onAuthStateChanged(async usuario => {
-    usuarioAtual = usuario;
-    funcaoAtual = null;
+  await signOut(auth);
+}
 
-    if (pararPedidos) {
-        pararPedidos();
-        pararPedidos = null;
-    }
+window.sair = sair;
 
-    if (!usuario) {
-        $("loginBox").style.display = "block";
-        $("appContainer").style.display = "none";
-        $("areaUsuario").style.display = "none";
-        $("tituloPainel").textContent = "PAINEL DE ACESSO";
-        $("mensagemLogin").textContent = "";
-        return;
-    }
+onAuthStateChanged(auth, async usuario => {
+  if (cancelarEscuta) {
+    cancelarEscuta();
+    cancelarEscuta = null;
+  }
 
-    if (usuario.uid === UID_FINANCEIRO) {
-        funcaoAtual = "financeiro";
-    } else if (usuario.uid === UID_COZINHA) {
-        funcaoAtual = "cozinha";
-    } else {
-        await auth.signOut();
-        $("mensagemLogin").textContent = "Este usuário não tem permissão para acessar.";
-        return;
-    }
+  usuarioAtual = usuario;
+  tipoUsuario = null;
 
-    $("loginBox").style.display = "none";
-    $("appContainer").style.display = "block";
-    $("areaUsuario").style.display = "flex";
-    $("tituloPainel").textContent = funcaoAtual === "financeiro"
-        ? "PAINEL DO FINANCEIRO" : "PAINEL DA COZINHA";
-    $("identificacaoUsuario").textContent = funcaoAtual === "financeiro"
-        ? "Acesso: Financeiro" : "Acesso: Cozinha";
-    $("entradaPedido").style.display = funcaoAtual === "financeiro" ? "block" : "none";
-    $("secaoHistorico").style.display = funcaoAtual === "financeiro" ? "block" : "none";
-    $("tituloPedidos").textContent = funcaoAtual === "financeiro"
-        ? "📋 Pedidos ativos" : "🍳 Pedidos liberados para preparo";
+  const login = document.getElementById("login");
+  const painel = document.getElementById("painel");
+  const btnSair = document.getElementById("btnSair");
 
-    ouvirPedidos();
+  if (!usuario) {
+    login.style.display = "block";
+    painel.style.display = "none";
+    btnSair.style.display = "none";
+    document.getElementById("rotuloPainel").textContent = "PAINEL DE PEDIDOS";
+    return;
+  }
+
+  if (usuario.uid === UID_FINANCEIRO) {
+    tipoUsuario = "financeiro";
+  } else if (usuario.uid === UID_COZINHA) {
+    tipoUsuario = "cozinha";
+  } else {
+    await signOut(auth);
+    mostrarMensagem("mensagemLogin", "Esta conta não tem autorização para acessar o painel.");
+    return;
+  }
+
+  login.style.display = "none";
+  painel.style.display = "block";
+  btnSair.style.display = "inline-block";
+
+  document.getElementById("painelFinanceiro").style.display =
+    tipoUsuario === "financeiro" ? "block" : "none";
+
+  document.getElementById("painelCozinha").style.display =
+    tipoUsuario === "cozinha" ? "block" : "none";
+
+  document.getElementById("rotuloPainel").textContent =
+    tipoUsuario === "financeiro" ? "PAINEL FINANCEIRO" : "PAINEL DA COZINHA";
+
+  iniciarEscuta();
 });
 
-function ouvirPedidos() {
-    const listaAtivos = $("pedidos");
-    listaAtivos.innerHTML = '<div class="vazio">Carregando pedidos...</div>';
+/* =====================================
+   CADASTRAR PEDIDO NO FINANCEIRO
+   ===================================== */
 
-    // O financeiro lê todos os pedidos para separar ativos e finalizados.
-    // A cozinha recebe somente pedidos liberados pelo financeiro.
-    let consulta = db.collection("pedidos");
-    if (funcaoAtual === "cozinha") {
-        consulta = consulta.where("liberado", "==", true);
-    }
+function converterValor(texto) {
+  const limpo = String(texto)
+    .replace(/[^\d,.-]/g, "")
+    .replace(/\./g, "")
+    .replace(",", ".");
 
-    pararPedidos = consulta.onSnapshot(snapshot => {
-        const todos = snapshot.docs.map(doc => ({id:doc.id,...doc.data()}));
-
-        const ativos = todos.filter(p => p.finalizado !== true);
-        const finalizados = todos.filter(p => p.finalizado === true);
-
-        // A cozinha não exibe pedidos já finalizados.
-        const ativosVisiveis = funcaoAtual === "cozinha"
-            ? ativos.filter(p => p.liberado === true)
-            : ativos;
-
-        ativosVisiveis.sort((a,b) =>
-            (a.criadoEm?.toMillis?.() || 0) - (b.criadoEm?.toMillis?.() || 0)
-        );
-
-        listaAtivos.innerHTML = "";
-        if (!ativosVisiveis.length) {
-            listaAtivos.innerHTML = '<div class="vazio">Nenhum pedido ativo neste momento.</div>';
-        } else {
-            ativosVisiveis.forEach(p => listaAtivos.appendChild(montarCartao(p, false)));
-        }
-
-        $("contador").textContent =
-            ativosVisiveis.length + (ativosVisiveis.length === 1 ? " pedido ativo" : " pedidos ativos");
-
-        if (funcaoAtual === "financeiro") {
-            finalizados.sort((a,b) =>
-                (b.finalizadoEm?.toMillis?.() || 0) - (a.finalizadoEm?.toMillis?.() || 0)
-            );
-
-            $("historico").innerHTML = "";
-            if (!finalizados.length) {
-                $("historico").innerHTML = '<div class="vazio">Ainda não há pedidos finalizados.</div>';
-            } else {
-                finalizados.forEach(p => $("historico").appendChild(montarCartao(p, true)));
-            }
-
-            $("contadorHistorico").textContent =
-                finalizados.length + (finalizados.length === 1 ? " finalizado" : " finalizados");
-        }
-    }, erro => {
-        console.error(erro);
-        listaAtivos.innerHTML = '<div class="vazio">Erro ao carregar pedidos. Confira as regras do Firestore.</div>';
-    });
+  return Number.parseFloat(limpo);
 }
 
-function montarCartao(p, noHistorico) {
-    const card = document.createElement("div");
-    const status = p.statusCozinha || "novo";
-    card.className = "pedido " + status;
+function lerMensagem(texto) {
+  const linhas = texto.split(/\r?\n/);
+  const itens = [];
 
-    const itensHTML = (Array.isArray(p.itens) ? p.itens : []).map(item => `
-        <div class="item">
-            <span><strong>${escaparHTML(item.quantidade)}x</strong> ${escaparHTML(item.nome)}</span>
-            <span>${dinheiro(item.preco)}</span>
-        </div>
-    `).join("");
+  let total = null;
+  let nomeCliente = "";
+  let mesa = "";
+  let observacao = "Nenhuma";
+  let numero = "";
 
-    const statusTexto = {
-        novo:"NOVO",preparando:"PREPARANDO",pronto:"PRONTO",entregue:"ENTREGUE"
-    }[status] || "NOVO";
+  for (const linhaOriginal of linhas) {
+    const linha = linhaOriginal.trim();
+    if (!linha) continue;
 
-    let botoes = "";
+    let resultado;
 
-    if (noHistorico) {
-        botoes = `<div class="observacao">🗄️ Pedido finalizado e salvo no banco de dados.</div>
-                  <div class="data-finalizacao">Finalizado em: ${escaparHTML(dataFormatada(p.finalizadoEm))}</div>`;
-    } else if (funcaoAtual === "financeiro") {
-        botoes = p.liberado
-            ? `<div class="observacao">✅ Pagamento confirmado. Pedido liberado para a cozinha.</div>`
-            : `<div class="observacao">⏳ Pagamento aguardando confirmação.</div>
-               <button type="button" class="btn-organizar btn-liberar" data-acao="liberar">
-               💳 Confirmar pagamento e liberar pedido</button>`;
-    } else {
-        botoes = `
-            <div class="acoes">
-                <button class="btn-preparar" data-acao="preparando">🍳 Preparar</button>
-                <button class="btn-pronto" data-acao="pronto">✅ Pronto</button>
-                <button class="btn-entregue" data-acao="entregue">📦 Entregue</button>
-            </div>
-            ${status === "entregue"
-                ? `<button type="button" class="btn-finalizar" data-acao="finalizar">✓ Finalizar e salvar pedido</button>`
-                : `<div class="observacao" style="margin-top:12px">Para finalizar, marque o pedido como Entregue.</div>`}`;
-    }
+    resultado = linha.match(/^Nome:\s*(.+)$/i);
+    if (resultado) nomeCliente = resultado[1].trim();
 
-    card.innerHTML = `
-        <div class="pedido-topo">
-            <div>
-                <div class="numero">Pedido ${escaparHTML(p.numero || p.id)}</div>
-                <div class="dados-cliente">${escaparHTML(p.nomeCliente)}</div>
-                <div class="dados-mesa">Mesa ${escaparHTML(p.mesa)}</div>
-            </div>
-            <div class="status">${statusTexto}</div>
-        </div>
-        <div class="itens">${itensHTML}</div>
-        <div class="total"><span>Total</span><span>${dinheiro(p.total)}</span></div>
-        <div class="pagamento">💰 <strong>Pagamento:</strong> ${p.pagamentoStatus === "confirmado" ? "Confirmado" : "A confirmar"}</div>
-        ${p.observacao ? `<div class="observacao">📝 ${escaparHTML(p.observacao)}</div>` : ""}
-        ${botoes}
-    `;
+    resultado = linha.match(/^Mesa:\s*(.+)$/i);
+    if (resultado) mesa = resultado[1].trim();
 
-    card.querySelectorAll("[data-acao]").forEach(botao => {
-        botao.addEventListener("click", () => executarAcao(p, botao.dataset.acao));
-    });
+    resultado = linha.match(/^Observação:\s*(.+)$/i);
+    if (resultado) observacao = resultado[1].trim() || "Nenhuma";
 
-    return card;
-}
+    resultado = linha.match(/^(?:Pedido\s*#|Número do pedido:\s*)(\S+)/i);
+    if (resultado) numero = resultado[1];
 
-async function executarAcao(pedido, acao) {
-    const ref = db.collection("pedidos").doc(pedido.id);
+    resultado = linha.match(/^Total:\s*R?\$?\s*([\d.,]+)/i);
+    if (resultado) total = converterValor(resultado[1]);
 
-    try {
-        if (acao === "liberar") {
-            if (funcaoAtual !== "financeiro") {
-                alert("Somente o financeiro pode liberar pedidos.");
-                return;
-            }
-            if (!confirm("Confirma que o pagamento foi recebido?")) return;
-
-            await ref.update({pagamentoStatus:"confirmado",liberado:true});
-            alert("Pagamento confirmado e pedido liberado para a cozinha!");
-            return;
-        }
-
-        if (["preparando","pronto","entregue"].includes(acao)) {
-            if (funcaoAtual !== "cozinha") {
-                alert("Somente a cozinha pode atualizar o preparo.");
-                return;
-            }
-            await ref.update({statusCozinha:acao});
-            return;
-        }
-
-        if (acao === "finalizar") {
-            if (funcaoAtual !== "cozinha") {
-                alert("Somente a cozinha pode finalizar o pedido.");
-                return;
-            }
-            if (pedido.statusCozinha !== "entregue") {
-                alert("Marque o pedido como Entregue antes de finalizar.");
-                return;
-            }
-            if (!confirm("Finalizar e arquivar este pedido? Ele sairá da lista ativa e ficará no histórico do financeiro.")) return;
-
-            await ref.update({
-                finalizado:true,
-                finalizadoEm:firebase.firestore.FieldValue.serverTimestamp()
-            });
-
-            alert("Pedido finalizado e salvo no histórico!");
-        }
-    } catch (erro) {
-        console.error(erro);
-        alert("Não foi possível salvar. Confira as regras do Firestore.");
-    }
-}
-
-async function organizarPedido() {
-    if (funcaoAtual !== "financeiro") {
-        alert("Somente o financeiro pode cadastrar pedidos.");
-        return;
-    }
-
-    const texto = $("mensagem").value.trim();
-    if (!texto) {
-        alert("Cole a mensagem do WhatsApp primeiro.");
-        return;
-    }
-
-    const linhas = texto.split(/\r?\n/);
-    const linhaCliente = linhas.find(l =>
-        /^(nome do cliente|cliente|nome)\s*:/i.test(l.trim())
-    );
-    const linhaMesa = linhas.find(l =>
-        /^(número da mesa|numero da mesa|mesa)\s*:/i.test(l.trim())
+    // Exemplo:
+    // • Pastel de Pizza | Quantidade: 2 | R$ 20,00
+    resultado = linha.match(
+      /^[•\-*]?\s*(.+?)\s*\|\s*Quantidade:\s*(\d+)\s*\|\s*R?\$?\s*([\d.,]+)/i
     );
 
-    const nomeCliente = linhaCliente
-        ? linhaCliente.replace(/^(nome do cliente|cliente|nome)\s*:/i,"").trim() : "";
-    const mesa = linhaMesa
-        ? linhaMesa.replace(/^(número da mesa|numero da mesa|mesa)\s*:/i,"").trim() : "";
+    if (resultado) {
+      const nome = resultado[1].trim();
+      const quantidade = Number.parseInt(resultado[2], 10);
+      const subtotal = converterValor(resultado[3]);
 
-    if (!nomeCliente || !mesa) {
-        alert("A mensagem precisa conter:\nNome do cliente: Maria Silva\nMesa: 04");
-        return;
-    }
-
-    const sabores = [
-        "pastel de pizza",
-        "pastel de frango com catupiry",
-        "pastel de carne com queijo",
-        "pastel de nutella"
-    ];
-
-    const itens = [];
-    let total = 0;
-
-    linhas.forEach(linha => {
-        if (!sabores.some(s => linha.toLowerCase().includes(s))) return;
-
-        const partes = linha.split("|");
-        if (partes.length < 3) return;
-
-        const nome = partes[0].replace("•","").trim();
-        const quantidade = parseInt(
-            partes[1].replace(/Quantidade:/i,"").trim(),10
-        );
-        const preco = parseFloat(
-            partes[2].replace(/R\$/i,"").trim()
-                .replace(/\./g,"").replace(",",".")
-        );
-
-        if (nome && Number.isInteger(quantidade) && quantidade > 0 &&
-            Number.isFinite(preco) && preco >= 0) {
-            itens.push({nome,quantidade,preco});
-            total += preco;
-        }
-    });
-
-    if (!itens.length) {
-        alert("Não encontrei os pastéis. Exemplo:\n• Pastel de Pizza | Quantidade: 2 | R$ 20,00");
-        return;
-    }
-
-    const linhaTotal = linhas.find(l => /^total\s*:/i.test(l.trim()));
-    if (linhaTotal) {
-        const m = linhaTotal.match(/R\$\s*([\d.,]+)/);
-        if (m) total = parseFloat(m[1].replace(/\./g,"").replace(",","."));
-    }
-
-    try {
-        await db.collection("pedidos").add({
-            numero:String(Date.now()).slice(-6),
-            nomeCliente,
-            mesa,
-            itens,
-            total,
-            pagamentoStatus:"pendente",
-            liberado:false,
-            statusCozinha:"novo",
-            finalizado:false,
-            finalizadoEm:null,
-            observacao:"Pedido recebido pelo WhatsApp.",
-            criadoPor:usuarioAtual.uid,
-            criadoEm:firebase.firestore.FieldValue.serverTimestamp()
+      if (nome && quantidade > 0 && Number.isFinite(subtotal)) {
+        itens.push({
+          nome,
+          quantidade,
+          preco: subtotal / quantidade
         });
-
-        $("mensagem").value = "";
-        alert("Pedido cadastrado! Confirme o pagamento para liberar à cozinha.");
-    } catch (erro) {
-        console.error(erro);
-        alert("Não foi possível cadastrar. Confira as regras do Firestore.");
+      }
     }
+  }
+
+  if (total === null) {
+    total = itens.reduce((soma, item) => soma + item.preco * item.quantidade, 0);
+  }
+
+  return { nomeCliente, mesa, observacao, numero, itens, total };
 }
+
+async function cadastrarPedido() {
+  limparMensagem("mensagemFinanceiro");
+
+  if (tipoUsuario !== "financeiro") {
+    mostrarMensagem("mensagemFinanceiro", "Somente o financeiro pode cadastrar pedidos.");
+    return;
+  }
+
+  const texto = document.getElementById("mensagemWhatsApp").value.trim();
+
+  if (!texto) {
+    mostrarMensagem("mensagemFinanceiro", "Cole a mensagem do WhatsApp primeiro.");
+    return;
+  }
+
+  const dados = lerMensagem(texto);
+
+  if (dados.itens.length === 0) {
+    mostrarMensagem(
+      "mensagemFinanceiro",
+      "Não encontrei os itens. Confira se cada item está no formato: • Pastel de Pizza | Quantidade: 2 | R$ 20,00"
+    );
+    return;
+  }
+
+  if (!dados.nomeCliente) {
+    mostrarMensagem("mensagemFinanceiro", "Não encontrei o nome do cliente na mensagem.");
+    return;
+  }
+
+  if (!dados.mesa) {
+    mostrarMensagem("mensagemFinanceiro", "Não encontrei o número da mesa na mensagem.");
+    return;
+  }
+
+  try {
+    const novoPedido = {
+      numero: dados.numero || String(Date.now()).slice(-6),
+      nomeCliente: dados.nomeCliente,
+      mesa: dados.mesa,
+      itens: dados.itens,
+      total: dados.total,
+      pagamentoStatus: "pendente",
+      liberado: false,
+      statusCozinha: "novo",
+      finalizado: false,
+      finalizadoEm: null,
+      observacao: dados.observacao || "Nenhuma",
+      criadoPor: usuarioAtual.uid,
+      criadoEm: serverTimestamp()
+    };
+
+    await addDoc(collection(db, "pedidos"), novoPedido);
+
+    document.getElementById("mensagemWhatsApp").value = "";
+    mostrarMensagem(
+      "mensagemFinanceiro",
+      "Pedido cadastrado! Confirme o pagamento no cartão do pedido para liberá-lo à cozinha.",
+      "sucesso"
+    );
+  } catch (erro) {
+    console.error(erro);
+    mostrarMensagem(
+      "mensagemFinanceiro",
+      "Não consegui cadastrar o pedido. Confira as regras do Firestore e sua conexão."
+    );
+  }
+}
+
+window.cadastrarPedido = cadastrarPedido;
+
+/* =====================================
+   CONFIRMAR PAGAMENTO
+   ===================================== */
+
+async function confirmarPagamento(id) {
+  if (tipoUsuario !== "financeiro") return;
+
+  const confirmar = window.confirm(
+    "Confirma que o pagamento foi verificado? O pedido será liberado para a cozinha."
+  );
+
+  if (!confirmar) return;
+
+  try {
+    await updateDoc(doc(db, "pedidos", id), {
+      pagamentoStatus: "confirmado",
+      liberado: true
+    });
+  } catch (erro) {
+    console.error(erro);
+    alert("Não foi possível confirmar o pagamento. Confira as regras do Firestore.");
+  }
+}
+
+window.confirmarPagamento = confirmarPagamento;
+
+/* =====================================
+   STATUS DA COZINHA
+   ===================================== */
+
+async function alterarStatus(id, status) {
+  if (tipoUsuario !== "cozinha") return;
+
+  try {
+    await updateDoc(doc(db, "pedidos", id), {
+      statusCozinha: status
+    });
+  } catch (erro) {
+    console.error(erro);
+    alert("Não foi possível atualizar o pedido. Confira as regras do Firestore.");
+  }
+}
+
+async function finalizarPedido(id) {
+  if (tipoUsuario !== "cozinha") return;
+
+  const pedido = pedidosAtuais.find(p => p.id === id);
+
+  if (!pedido || pedido.statusCozinha !== "entregue") {
+    alert("Marque o pedido como entregue antes de finalizá-lo.");
+    return;
+  }
+
+  const confirmar = window.confirm(
+    "Finalizar e salvar este pedido? Ele sairá dos pedidos ativos e ficará no histórico do financeiro."
+  );
+
+  if (!confirmar) return;
+
+  try {
+    await updateDoc(doc(db, "pedidos", id), {
+      finalizado: true,
+      finalizadoEm: serverTimestamp()
+    });
+  } catch (erro) {
+    console.error(erro);
+    alert("Não foi possível finalizar o pedido. Confira as regras do Firestore.");
+  }
+}
+
+window.alterarStatus = alterarStatus;
+window.finalizarPedido = finalizarPedido;
+
+/* =====================================
+   ESCUTAR PEDIDOS EM TEMPO REAL
+   ===================================== */
+
+function iniciarEscuta() {
+  if (cancelarEscuta) {
+    cancelarEscuta();
+    cancelarEscuta = null;
+  }
+
+  const referencia = collection(db, "pedidos");
+
+  // A cozinha consulta apenas pedidos liberados.
+  const consulta = tipoUsuario === "cozinha"
+    ? query(referencia, where("liberado", "==", true))
+    : referencia;
+
+  cancelarEscuta = onSnapshot(consulta, snapshot => {
+    const todos = snapshot.docs.map(documento => ({
+      id: documento.id,
+      ...documento.data()
+    }));
+
+    pedidosAtuais = ordenarPorData(
+      todos.filter(p => p.finalizado !== true)
+    );
+
+    historicoAtual = ordenarPorData(
+      todos.filter(p => p.finalizado === true)
+    );
+
+    if (tipoUsuario === "financeiro") {
+      renderizarFinanceiro();
+    } else {
+      renderizarCozinha();
+    }
+  }, erro => {
+    console.error(erro);
+    alert("Erro ao carregar pedidos. Verifique as regras do Firestore.");
+  });
+}
+
+/* =====================================
+   CARTÃO DE PEDIDO
+   ===================================== */
+
+function htmlItens(itens) {
+  if (!Array.isArray(itens) || itens.length === 0) {
+    return '<div class="item">Nenhum item registrado</div>';
+  }
+
+  return itens.map(item => {
+    const quantidade = Number(item.quantidade || 1);
+    const preco = Number(item.preco || 0);
+    const subtotal = preco * quantidade;
+
+    return `
+      <div class="item">
+        <span><strong>${quantidade}x</strong> ${escapar(item.nome)}</span>
+        <span>${moeda(subtotal)}</span>
+      </div>
+    `;
+  }).join("");
+}
+
+function criarCartao(pedido, modo) {
+  const status = pedido.statusCozinha || "novo";
+  const classeStatus = ["novo", "preparando", "pronto", "entregue"].includes(status)
+    ? status
+    : "novo";
+
+  const pagamento = pedido.pagamentoStatus === "confirmado"
+    ? "Confirmado"
+    : "Pendente";
+
+  let acoes = "";
+
+  if (modo === "financeiro") {
+    if (pedido.pagamentoStatus !== "confirmado" && pedido.liberado !== true) {
+      acoes = `
+        <div class="acoes">
+          <button class="btn-confirmar" onclick="confirmarPagamento('${pedido.id}')">
+            ✓ Confirmar pagamento e liberar
+          </button>
+        </div>
+      `;
+    } else {
+      acoes = `
+        <div class="detalhes">
+          ✅ Pagamento confirmado<br>
+          🔓 Pedido liberado para a cozinha
+        </div>
+      `;
+    }
+  } else {
+    if (status === "novo") {
+      acoes = `
+        <div class="acoes">
+          <button class="btn-preparar" onclick="alterarStatus('${pedido.id}','preparando')">
+            🍳 Preparar
+          </button>
+        </div>
+      `;
+    } else if (status === "preparando") {
+      acoes = `
+        <div class="acoes">
+          <button class="btn-pronto" onclick="alterarStatus('${pedido.id}','pronto')">
+            ✓ Pronto
+          </button>
+        </div>
+      `;
+    } else if (status === "pronto") {
+      acoes = `
+        <div class="acoes">
+          <button class="btn-entregue" onclick="alterarStatus('${pedido.id}','entregue')">
+            📦 Entregue
+          </button>
+        </div>
+      `;
+    } else if (status === "entregue") {
+      acoes = `
+        <div class="acoes">
+          <button class="btn-salvar" onclick="finalizarPedido('${pedido.id}')">
+            ✓ Finalizar e salvar pedido
+          </button>
+        </div>
+      `;
+    }
+  }
+
+  return `
+    <article class="pedido ${classeStatus}">
+      <div class="pedido-topo">
+        <div class="numero">Pedido #${escapar(pedido.numero || pedido.id.slice(-6))}</div>
+        <span class="status ${classeStatus}">${nomeStatus(classeStatus)}</span>
+      </div>
+
+      <div class="detalhes">
+        👤 <strong>Cliente:</strong> ${escapar(pedido.nomeCliente || "Não informado")}<br>
+        🍽️ <strong>Mesa:</strong> ${escapar(pedido.mesa || "Não informada")}<br>
+        💳 <strong>Pagamento:</strong> ${pagamento}
+      </div>
+
+      <div class="itens">${htmlItens(pedido.itens)}</div>
+
+      <div class="total">
+        <span>Total</span>
+        <span>${moeda(pedido.total)}</span>
+      </div>
+
+      <div class="detalhes">
+        📝 <strong>Observação:</strong><br>
+        ${escapar(pedido.observacao || "Nenhuma")}
+      </div>
+
+      ${acoes}
+    </article>
+  `;
+}
+
+/* =====================================
+   RENDERIZAR FINANCEIRO
+   ===================================== */
+
+function renderizarFinanceiro() {
+  const ativos = pedidosAtuais;
+  const historico = historicoAtual;
+
+  document.getElementById("contadorAtivos").textContent =
+    `${ativos.length} ${ativos.length === 1 ? "pedido" : "pedidos"}`;
+
+  document.getElementById("contadorHistorico").textContent =
+    `${historico.length} ${historico.length === 1 ? "pedido" : "pedidos"}`;
+
+  document.getElementById("listaPedidos").innerHTML = ativos.length
+    ? ativos.map(p => criarCartao(p, "financeiro")).join("")
+    : '<div class="vazio">Nenhum pedido ativo.<br>Os novos pedidos cadastrados aparecerão aqui.</div>';
+
+  document.getElementById("historico").innerHTML = historico.length
+    ? historico.map(p => `
+        <article class="pedido entregue">
+          <div class="pedido-topo">
+            <div class="numero">Pedido #${escapar(p.numero || p.id.slice(-6))}</div>
+            <span class="status entregue">FINALIZADO</span>
+          </div>
+
+          <div class="detalhes">
+            👤 <strong>Cliente:</strong> ${escapar(p.nomeCliente || "Não informado")}<br>
+            🍽️ <strong>Mesa:</strong> ${escapar(p.mesa || "Não informada")}<br>
+            💳 <strong>Pagamento:</strong> ${p.pagamentoStatus === "confirmado" ? "Confirmado" : "Pendente"}
+          </div>
+
+          <div class="itens">${htmlItens(p.itens)}</div>
+
+          <div class="total">
+            <span>Total</span>
+            <span>${moeda(p.total)}</span>
+          </div>
+
+          <div class="detalhes">
+            📝 <strong>Observação:</strong><br>
+            ${escapar(p.observacao || "Nenhuma")}
+          </div>
+
+          <div class="data-historico">
+            ✓ Finalizado em: ${dataFormatada(p.finalizadoEm)}
+          </div>
+        </article>
+      `).join("")
+    : '<div class="vazio">Nenhum pedido finalizado foi salvo ainda.</div>';
+
+  mostrarAba(abaAtual);
+}
+
+/* =====================================
+   RENDERIZAR COZINHA
+   ===================================== */
+
+function renderizarCozinha() {
+  const ativos = pedidosAtuais.filter(p => p.liberado === true);
+
+  document.getElementById("contadorCozinha").textContent =
+    `${ativos.length} ${ativos.length === 1 ? "pedido" : "pedidos"}`;
+
+  document.getElementById("listaCozinha").innerHTML = ativos.length
+    ? ativos.map(p => criarCartao(p, "cozinha")).join("")
+    : '<div class="vazio">Nenhum pedido liberado no momento.<br>Aguarde a confirmação do financeiro.</div>';
+}
+
+/* =====================================
+   ABAS DO FINANCEIRO
+   ===================================== */
+
+function mostrarAba(aba) {
+  abaAtual = aba;
+
+  document.getElementById("secaoAtivos").style.display =
+    aba === "ativos" ? "block" : "none";
+
+  document.getElementById("secaoHistorico").style.display =
+    aba === "historico" ? "block" : "none";
+
+  document.getElementById("abaAtivos").classList.toggle(
+    "ativa", aba === "ativos"
+  );
+
+  document.getElementById("abaHistorico").classList.toggle(
+    "ativa", aba === "historico"
+  );
+}
+
+window.mostrarAba = mostrarAba;
 </script>
+
 </body>
 </html>
