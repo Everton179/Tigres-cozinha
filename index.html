@@ -941,7 +941,35 @@ function tocarAlerta() {
 // A página começa vazia, pronta para receber pedidos.
 atualizarContador();
 
+
+</script>
+
+<!-- Conexão do Tigres Food com o Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCS5gKfwC5LA6HYtwZEs9lm6Qu54QVC0Qw",
+    authDomain: "tigres-food.firebaseapp.com",
+    projectId: "tigres-food",
+    storageBucket: "tigres-food.firebasestorage.app",
+    messagingSenderId: "374947589802",
+    appId: "1:374947589802:web:db70442bc08353a45b2ad3",
+    measurementId: "G-N4NZ03TM9R"
+  };
+
+  if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+  }
+
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 </script>
 
 </body>
 </html>
+
+   
+
