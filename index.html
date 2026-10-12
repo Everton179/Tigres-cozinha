@@ -61,8 +61,8 @@ button{font-family:inherit}
 .btn-salvar{background:#8f52f9;color:#fff;border:1px solid #6D28D9!important;grid-column:1/-1}
 .btn-salvar:hover{background:#330283}
 .btn-liberar{background:#15803d!important;color:white}
-.btn-finalizar{width:100%;margin-top:12px;background:#6d28d9;color:#fff;border:1px solid #5b21b6;border-radius:8px;padding:12px;font-weight:800;cursor:pointer}
-.btn-finalizar:hover{background:#4c1d95}
+.btn-finalizar{width:100%;margin-top:0;background:#6d28d9;color:#fff;border:1px solid #5b21b6;border-radius:8px;padding:11px 6px;font-weight:700;font-size:12px;cursor:pointer;transition:.2s}
+.btn-finalizar:hover{background:#4c1d95;transform:translateY(-1px)}
 .vazio{text-align:center;color:#526176;padding:35px 20px;border:2px dashed #64748b;border-radius:14px;background:#f0f1f3;grid-column:1/-1;line-height:1.7}
 .login-box{width:92%;max-width:430px;margin:55px auto;padding:28px;background:#f8fafc;color:#182230;border:1px solid #d5dde7;border-radius:16px;box-shadow:0 10px 28px #0004}
 .login-box h2{margin-bottom:10px;color:#111827}
@@ -377,25 +377,33 @@ function montarCartao(p, noHistorico) {
     } else {
         botoes = `
             <div class="acoes">
-                <button class="btn-preparar" data-acao="preparando">
+                <button type="button" class="btn-preparar" data-acao="preparando">
                     🍳 Preparar
                 </button>
-                <button class="btn-pronto" data-acao="pronto">
+
+                <button type="button" class="btn-pronto" data-acao="pronto">
                     ✅ Pronto
                 </button>
-                <button class="btn-entregue" data-acao="entregue">
+
+                <button type="button" class="btn-entregue" data-acao="entregue">
                     📦 Entregue
                 </button>
+
+                ${status === "entregue"
+                    ? `<button type="button"
+                        class="btn-finalizar"
+                        data-acao="finalizar">
+                        ✓ Finalizar e salvar
+                       </button>`
+                    : ""
+                }
             </div>
-            ${status === "entregue"
-                ? `<button type="button"
-                    class="btn-finalizar"
-                    data-acao="finalizar">
-                    ✓ Finalizar e salvar pedido
-                   </button>`
-                : `<div class="observacao" style="margin-top:12px">
+
+            ${status !== "entregue"
+                ? `<div class="observacao" style="margin-top:12px">
                     Para finalizar, marque o pedido como Entregue.
                    </div>`
+                : ""
             }
         `;
     }
@@ -644,8 +652,21 @@ async function organizarPedido() {
     botao.textContent = "CADASTRANDO PEDIDO...";
 
     try {
+        // Busca os pedidos existentes para definir o próximo número.
+        const snapshot = await db.collection("pedidos").get();
+
+        const numerosExistentes = snapshot.docs
+            .map(doc => String(doc.data().numero ?? ""))
+            .filter(numero => /^\d{1,5}$/.test(numero))
+            .map(numero => Number(numero))
+            .filter(numero => Number.isSafeInteger(numero) && numero > 0);
+
+        const proximoNumero = numerosExistentes.length
+            ? Math.max(...numerosExistentes) + 1
+            : 1;
+
         await db.collection("pedidos").add({
-            numero: String(Date.now()).slice(-6),
+            numero: String(proximoNumero),
             nomeCliente,
             mesa,
             itens,
@@ -663,7 +684,8 @@ async function organizarPedido() {
         $("mensagem").value = "";
 
         alert(
-            "Pedido cadastrado! Confirme o pagamento para liberar à cozinha."
+            "Pedido " + proximoNumero +
+            " cadastrado! Confirme o pagamento para liberar à cozinha."
         );
     } catch (erro) {
         console.error("Erro ao cadastrar pedido:", erro);
