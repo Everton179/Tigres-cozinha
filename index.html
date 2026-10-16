@@ -418,7 +418,7 @@ function montarCartao(p, noHistorico) {
                     ${escaparHTML(p.nomeCliente)}
                 </div>
                 <div class="dados-mesa">
-                    Mesa ${escaparHTML(p.mesa)}
+                    Mesa ${escaparHTML(p.mesa || "Não informada")}
                 </div>
             </div>
             <div class="status">${statusTexto}</div>
@@ -548,8 +548,9 @@ async function organizarPedido() {
 
     const linhas = texto.split(/\r?\n/);
 
+    // Aceita tanto "Nome do cliente" quanto "Identificação".
     const linhaCliente = linhas.find(l =>
-        /^(nome do cliente|cliente|nome)\s*:/i.test(l.trim())
+        /^(nome do cliente|identificação|identificacao|cliente|nome)\s*:/i.test(l.trim())
     );
 
     const linhaMesa = linhas.find(l =>
@@ -558,19 +559,23 @@ async function organizarPedido() {
 
     const nomeCliente = linhaCliente
         ? linhaCliente.replace(
-            /^(nome do cliente|cliente|nome)\s*:/i, ""
+            /^(nome do cliente|identificação|identificacao|cliente|nome)\s*:/i,
+            ""
           ).trim()
         : "";
 
+    // A mensagem atual do site não contém mesa.
+    // Se não houver mesa, o pedido será cadastrado normalmente.
     const mesa = linhaMesa
         ? linhaMesa.replace(
-            /^(número da mesa|numero da mesa|mesa)\s*:/i, ""
-          ).trim()
-        : "";
+            /^(número da mesa|numero da mesa|mesa)\s*:/i,
+            ""
+          ).trim() || "Não informada"
+        : "Não informada";
 
-    if (!nomeCliente || !mesa) {
+    if (!nomeCliente) {
         alert(
-            "A mensagem precisa conter:\nNome do cliente: Maria Silva\nMesa: 04"
+            "Não encontrei o nome do cliente. Verifique se a mensagem contém Identificação: ou Nome do cliente:"
         );
         return;
     }
@@ -652,7 +657,7 @@ async function organizarPedido() {
     botao.textContent = "CADASTRANDO PEDIDO...";
 
     try {
-        // Busca os pedidos existentes para definir o próximo número.
+        // Mantém a numeração atual dos pedidos.
         const snapshot = await db.collection("pedidos").get();
 
         const numerosExistentes = snapshot.docs
