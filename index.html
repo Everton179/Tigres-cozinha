@@ -21,6 +21,7 @@ textarea{width:100%;min-height:160px;resize:vertical;background:#fff;color:#0909
 textarea::placeholder{color:#7a8797}
 textarea:focus{border-color:#3478d4;box-shadow:0 0 0 3px #3478d422}
 button{font-family:inherit}
+button:disabled{opacity:.6;cursor:wait}
 .btn-organizar{margin-top:14px;width:100%;padding:14px;border:2px solid #080808;border-radius:9px;background:#5091ec;color:#fff;font-weight:750;font-size:14px;cursor:pointer;transition:.2s}
 .btn-organizar:hover{background:#141bcf;transform:translateY(-1px)}
 .titulo-pedidos{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:28px 0 20px}
@@ -113,7 +114,7 @@ button{font-family:inherit}
 <div class="container" id="appContainer" style="display:none">
     <div class="entrada" id="entradaPedido">
         <h2>📥 Receber pedido</h2>
-        <p>Cole a mensagem recebida no WhatsApp. Depois de cadastrar, confirme o pagamento para liberar o pedido à cozinha.</p>
+        <p>Cole a mensagem recebida no WhatsApp. Depois de cadastrar, confirme o pagamento para conferir o estoque e liberar o pedido à cozinha.</p>
         <textarea id="mensagem" placeholder="Cole aqui a mensagem do WhatsApp..."></textarea>
         <button class="btn-organizar" id="botaoOrganizar">🐯 CADASTRAR PEDIDO</button>
     </div>
@@ -362,7 +363,7 @@ function montarCartao(p, noHistorico) {
     } else if (funcaoAtual === "financeiro") {
         botoes = p.liberado
             ? `<div class="observacao">
-                ✅ Pagamento confirmado. Pedido liberado para a cozinha.
+                ✅ Pagamento confirmado. Estoque descontado e pedido liberado para a cozinha.
                </div>`
             : `
                 <div class="observacao">
@@ -450,14 +451,18 @@ function montarCartao(p, noHistorico) {
 
     card.querySelectorAll("[data-acao]").forEach(botao => {
         botao.addEventListener("click", () =>
-            executarAcao(p, botao.dataset.acao)
+            executarAcao(p, botao.dataset.acao, botao)
         );
     });
 
     return card;
 }
 
-async function executarAcao(pedido, acao) {
+/* =====================================================
+   LIBERAÇÃO DO PEDIDO E DESCONTO SEGURO DO ESTOQUE
+   ===================================================== */
+
+async function executarAcao(pedido, acao, botaoClicado) {
     const ref = db.collection("pedidos").doc(pedido.id);
 
     try {
@@ -467,19 +472,219 @@ async function executarAcao(pedido, acao) {
                 return;
             }
 
-            if (pedido.liberado === true) {
-                alert("Este pedido já foi liberado.");
+            if (!confirm(
+                "Confirma que o pagamento foi recebido e deseja conferir o estoque e liberar o pedido para a cozinha?"
+            )) {
                 return;
             }
 
-            if (!confirm("Confirma que o pagamento foi recebido?")) return;
+            // Relaciona os nomes dos pastéis aos documentos do estoque.
+            const mapaSabores = [
+                {
+                    documento: "frango_catupiry",
+                    teste: /frango\s+com\s+catupiry/i,
+                    nome: "Frango com catupiry"
+                },
+                {
+                    documento: "carne_queijo",
+                    teste: /carne\s+com\s+queijo/i,
+                    nome: "Carne com queijo"
+                },
+                {
+                    documento: "pizza",
+                    teste: /pastel\s+de\s+pizza/i,
+                    nome: "Pizza"
+                },
+                {
+                    documento: "nutella",
+                    teste: /nutella/i,
+                    nome: "Nutella"
+                }
+            ];
 
-            await ref.update({
-                pagamentoStatus: "confirmado",
-                liberado: true
-            });
+            if (botaoClicado) {
+                botaoClicado.disabled = true;
+                botaoClicado.textContent = "CONFERINDO ESTOQUE...";
+            }
 
-            alert("Pagamento confirmado e pedido liberado para a cozinha!");
+            try {
+                await db.runTransaction(async transacao => {
+                    // Primeira leitura: pedido atual no banco.
+                    const pedidoDoc = await transacao.get(ref);
+
+                    if (!pedidoDoc.exists) {
+                        throw new Error("PEDIDO_NAO_ENCONTRADO");
+                    }
+
+                    const dadosPedido = pedidoDoc.data();
+
+                    if (dadosPedido.liberado === true) {
+                        throw new Error("PEDIDO_JA_LIBERADO");
+                    }
+
+                    if (dadosPedido.estoqueDescontado === true) {
+                        throw new Error("ESTOQUE_JA_DESCONTADO");
+                    }
+
+                    if (
+                        !Array.isArray(dadosPedido.itens) ||
+                        dadosPedido.itens.length === 0
+                    ) {
+                        throw new Error("ITENS_INVALIDOS");
+                    }
+
+                    // Soma as quantidades de cada sabor.
+                    const quantidades = {};
+
+                    for (const item of dadosPedido.itens) {
+                        const sabor = mapaSabores.find(s =>
+                            s.teste.test(String(item.nome || ""))
+                        );
+
+                        const quantidade = Number(item.quantidade);
+
+                        if (
+                            !sabor ||
+                            !Number.isInteger(quantidade) ||
+                            quantidade <= 0
+                        ) {
+                            throw new Error(
+                                "ITEM_INVALIDO:" +
+                                String(item.nome || "desconhecido")
+                            );
+                        }
+
+                        quantidades[sabor.documento] =
+                            (quantidades[sabor.documento] || 0) +
+                            quantidade;
+                    }
+
+                    const documentos = Object.keys(quantidades);
+
+                    if (!documentos.length) {
+                        throw new Error("ITENS_INVALIDOS");
+                    }
+
+                    // Prepara todas as referências de estoque.
+                    const referencias = documentos.map(documento => ({
+                        documento,
+                        ref: db.collection("estoque").doc(documento),
+                        quantidadePedida: quantidades[documento]
+                    }));
+
+                    // Todas as leituras são realizadas antes das gravações.
+                    const estoquesLidos = [];
+
+                    for (const estoque of referencias) {
+                        const estoqueDoc = await transacao.get(estoque.ref);
+
+                        if (!estoqueDoc.exists) {
+                            throw new Error(
+                                "ESTOQUE_NAO_CADASTRADO:" + estoque.documento
+                            );
+                        }
+
+                        const quantidadeDisponivel =
+                            estoqueDoc.data().quantidade;
+
+                        if (
+                            !Number.isInteger(quantidadeDisponivel) ||
+                            quantidadeDisponivel < 0
+                        ) {
+                            throw new Error(
+                                "ESTOQUE_INVALIDO:" + estoque.documento
+                            );
+                        }
+
+                        if (
+                            quantidadeDisponivel <
+                            estoque.quantidadePedida
+                        ) {
+                            throw new Error(
+                                "ESTOQUE_INSUFICIENTE:" +
+                                estoque.documento + ":" +
+                                quantidadeDisponivel + ":" +
+                                estoque.quantidadePedida
+                            );
+                        }
+
+                        estoquesLidos.push({
+                            ref: estoque.ref,
+                            novaQuantidade:
+                                quantidadeDisponivel -
+                                estoque.quantidadePedida
+                        });
+                    }
+
+                    // Só desconta se todos os sabores tiverem estoque.
+                    for (const estoque of estoquesLidos) {
+                        transacao.update(estoque.ref, {
+                            quantidade: estoque.novaQuantidade
+                        });
+                    }
+
+                    // Liberação e desconto ficam na mesma transação.
+                    transacao.update(ref, {
+                        pagamentoStatus: "confirmado",
+                        liberado: true,
+                        estoqueDescontado: true
+                    });
+                });
+
+                alert(
+                    "Pagamento confirmado! Estoque atualizado e pedido liberado para a cozinha."
+                );
+
+            } catch (erroEstoque) {
+                console.error("Erro ao liberar pedido:", erroEstoque);
+
+                const mensagem = String(erroEstoque.message || "");
+
+                const nomes = {
+                    frango_catupiry: "Frango com catupiry",
+                    carne_queijo: "Carne com queijo",
+                    pizza: "Pizza",
+                    nutella: "Nutella"
+                };
+
+                if (mensagem === "PEDIDO_JA_LIBERADO") {
+                    alert("Este pedido já foi liberado. Nenhum novo desconto foi feito.");
+                } else if (mensagem === "ESTOQUE_JA_DESCONTADO") {
+                    alert("O estoque deste pedido já foi descontado. Não haverá novo desconto.");
+                } else if (mensagem === "PEDIDO_NAO_ENCONTRADO") {
+                    alert("O pedido não foi encontrado no Firestore.");
+                } else if (mensagem === "ITENS_INVALIDOS") {
+                    alert("O pedido não possui itens válidos. Não foi liberado.");
+                } else if (mensagem.startsWith("ITEM_INVALIDO:")) {
+                    alert("Não reconheci um item do pedido: " + mensagem.split(":").slice(1).join(":") + ". Confira o nome do pastel. O pedido não foi liberado.");
+                } else if (mensagem.startsWith("ESTOQUE_NAO_CADASTRADO:")) {
+                    const documento = mensagem.split(":")[1];
+                    alert("Não encontrei o documento de estoque de " + (nomes[documento] || documento) + ". O pedido não foi liberado.");
+                } else if (mensagem.startsWith("ESTOQUE_INVALIDO:")) {
+                    const documento = mensagem.split(":")[1];
+                    alert("A quantidade cadastrada no estoque de " + (nomes[documento] || documento) + " é inválida. O pedido não foi liberado.");
+                } else if (mensagem.startsWith("ESTOQUE_INSUFICIENTE:")) {
+                    const partes = mensagem.split(":");
+                    alert(
+                        "Estoque insuficiente para " +
+                        (nomes[partes[1]] || partes[1]) +
+                        ". Disponível: " + partes[2] +
+                        "; pedido: " + partes[3] +
+                        ". Nenhuma unidade foi descontada e o pedido não foi liberado."
+                    );
+                } else {
+                    alert(
+                        "Não foi possível liberar o pedido. Nenhuma alteração parcial da transação foi confirmada. Confira as regras do Firestore e sua conexão."
+                    );
+                }
+            } finally {
+                if (botaoClicado && botaoClicado.isConnected) {
+                    botaoClicado.disabled = false;
+                    botaoClicado.textContent =
+                        "💳 Confirmar pagamento e liberar pedido";
+                }
+            }
+
             return;
         }
 
@@ -510,21 +715,25 @@ async function executarAcao(pedido, acao) {
             }
 
             if (pedido.finalizado === true) {
-                alert("Este pedido já está finalizado.");
+                alert("Este pedido já foi finalizado.");
                 return;
             }
 
             if (!confirm(
                 "Finalizar e arquivar este pedido? Ele sairá da lista ativa e ficará no histórico do financeiro."
-            )) return;
+            )) {
+                return;
+            }
 
             await ref.update({
                 finalizado: true,
-                finalizadoEm: firebase.firestore.FieldValue.serverTimestamp()
+                finalizadoEm:
+                    firebase.firestore.FieldValue.serverTimestamp()
             });
 
             alert("Pedido finalizado e salvo no histórico!");
         }
+
     } catch (erro) {
         console.error("Erro ao atualizar pedido:", erro);
         alert(
@@ -532,6 +741,10 @@ async function executarAcao(pedido, acao) {
         );
     }
 }
+
+/* =====================================================
+   CADASTRO DE PEDIDOS RECEBIDOS PELO WHATSAPP
+   ===================================================== */
 
 async function organizarPedido() {
     if (funcaoAtual !== "financeiro" || !usuarioAtual) {
@@ -548,7 +761,6 @@ async function organizarPedido() {
 
     const linhas = texto.split(/\r?\n/);
 
-    // Aceita tanto "Nome do cliente" quanto "Identificação".
     const linhaCliente = linhas.find(l =>
         /^(nome do cliente|identificação|identificacao|cliente|nome)\s*:/i.test(l.trim())
     );
@@ -564,8 +776,6 @@ async function organizarPedido() {
           ).trim()
         : "";
 
-    // A mensagem atual do site não contém mesa.
-    // Se não houver mesa, o pedido será cadastrado normalmente.
     const mesa = linhaMesa
         ? linhaMesa.replace(
             /^(número da mesa|numero da mesa|mesa)\s*:/i,
@@ -657,7 +867,6 @@ async function organizarPedido() {
     botao.textContent = "CADASTRANDO PEDIDO...";
 
     try {
-        // Mantém a numeração atual dos pedidos.
         const snapshot = await db.collection("pedidos").get();
 
         const numerosExistentes = snapshot.docs
@@ -690,7 +899,7 @@ async function organizarPedido() {
 
         alert(
             "Pedido " + proximoNumero +
-            " cadastrado! Confirme o pagamento para liberar à cozinha."
+            " cadastrado! Confirme o pagamento para conferir o estoque e liberar à cozinha."
         );
     } catch (erro) {
         console.error("Erro ao cadastrar pedido:", erro);
